@@ -61,11 +61,23 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('newPasswordToggle element:', newPasswordToggle);
         console.log('confirmPasswordToggle element:', confirmPasswordToggle);
         
-        // Event listeners are now handled by AWS Auth system
-        // newPasswordInput.addEventListener('input', validatePassword);
-        // confirmPasswordInput.addEventListener('input', validatePasswordMatch);
-        // resetPasswordBtn.addEventListener('click', handleResetPassword);
-        // resendOtpBtn.addEventListener('click', handleResendOtp);
+        // Add password validation listeners
+        if (newPasswordInput) {
+            newPasswordInput.addEventListener('input', validatePassword);
+        }
+        if (confirmPasswordInput) {
+            confirmPasswordInput.addEventListener('input', validatePasswordMatch);
+        }
+        
+        // Add resend OTP functionality
+        if (resendOtpBtn) {
+            resendOtpBtn.addEventListener('click', handleResendOtp);
+        }
+        
+        // Add manual form submission
+        if (resetPasswordBtn) {
+            resetPasswordBtn.addEventListener('click', handleManualResetPassword);
+        }
         
         if (newPasswordToggle) {
             console.log('Adding click listener to newPasswordToggle');
@@ -207,7 +219,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (otpValue.length === 6) {
             // All OTP inputs are filled
             otpInputs.forEach(input => input.classList.add('filled'));
-            validateOtp(otpValue);
+            // Auto-submit form when OTP is complete
+            autoSubmitResetForm(otpValue);
         } else {
             // Clear filled state
             otpInputs.forEach(input => input.classList.remove('filled'));
@@ -218,6 +231,28 @@ document.addEventListener('DOMContentLoaded', function() {
         // OTP validation is now handled by AWS Auth system
         console.log('OTP validation handled by AWS Auth system');
         return true;
+    }
+
+    // Auto-submit form when OTP is complete and passwords are valid
+    function autoSubmitResetForm(otpValue) {
+        const newPassword = newPasswordInput ? newPasswordInput.value : '';
+        const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value : '';
+        const email = resetEmail || getEmailFromSession();
+        
+        // Check if passwords are valid and match
+        if (newPassword && confirmPassword && newPassword === confirmPassword && newPassword.length >= 8) {
+            // Call AWS Auth system to handle reset password
+            if (window.awsAuth && typeof window.awsAuth.handleResetPassword === 'function') {
+                console.log('Auto-submitting reset password form');
+                window.awsAuth.handleResetPassword(email, otpValue, newPassword);
+            }
+        }
+    }
+
+    // Get email from session storage or URL parameters
+    function getEmailFromSession() {
+        return sessionStorage.getItem('resetPasswordEmail') || 
+               new URLSearchParams(window.location.search).get('email') || '';
     }
 
     function clearOtpInputs() {
@@ -268,8 +303,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle resend OTP - Now handled by AWS Auth
     function handleResendOtp() {
-        // This is now handled by the AWS Auth system
-        console.log('Resend OTP handled by AWS Auth system');
+        const email = resetEmail || getEmailFromSession();
+        
+        if (!email) {
+            showNotification('Email not found. Please try the forgot password process again.', 'error');
+            return;
+        }
+        
+        // Call AWS Auth system to handle resend forgot code
+        if (window.awsAuth && typeof window.awsAuth.handleResendForgotCode === 'function') {
+            console.log('Resending forgot code for:', email);
+            window.awsAuth.handleResendForgotCode(email);
+            startOtpTimer(); // Start the cooldown timer
+        } else {
+            showNotification('Resend functionality not available. Please try again.', 'error');
+        }
     }
 
     function startOtpTimer() {
@@ -299,6 +347,43 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleResetPassword() {
         // Password reset is now handled by AWS Auth system
         console.log('Password reset handled by AWS Auth system');
+    }
+
+    // Manual reset password function for button click
+    function handleManualResetPassword() {
+        const email = resetEmail || getEmailFromSession();
+        const otpValue = Array.from(otpInputs).map(input => input.value).join('');
+        const newPassword = newPasswordInput ? newPasswordInput.value : '';
+        const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value : '';
+        
+        // Validate inputs
+        if (!email) {
+            showNotification('Email not found. Please try the forgot password process again.', 'error');
+            return;
+        }
+        
+        if (!otpValue || otpValue.length !== 6) {
+            showNotification('Please enter the complete 6-digit verification code.', 'error');
+            return;
+        }
+        
+        if (!newPassword || newPassword.length < 8) {
+            showNotification('Password must be at least 8 characters long.', 'error');
+            return;
+        }
+        
+        if (newPassword !== confirmPassword) {
+            showNotification('Passwords do not match.', 'error');
+            return;
+        }
+        
+        // Call AWS Auth system to handle reset password
+        if (window.awsAuth && typeof window.awsAuth.handleResetPassword === 'function') {
+            console.log('Manually submitting reset password form');
+            window.awsAuth.handleResetPassword(email, otpValue, newPassword);
+        } else {
+            showNotification('Reset password functionality not available. Please try again.', 'error');
+        }
     }
 
     // Utility functions

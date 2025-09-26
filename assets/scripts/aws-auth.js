@@ -9,7 +9,10 @@ class AWSAuthService {
         this.endpoints = {
             register: '/auth/register',
             verifyEmail: '/auth/verify-email',
-            resendVerification: '/auth/resend-verification'
+            resendVerification: '/auth/resend-verification',
+            forgotPassword: '/auth/forgot-password',
+            resendForgotCode: '/auth/resend-forgot-code',
+            resetPassword: '/auth/reset-password'
         };
         
         // Turnstile widget management
@@ -615,6 +618,364 @@ class AWSAuthService {
             
         } catch (error) {
             console.error('Turnstile resend verification error:', error);
+            this.showNotification('Security verification failed. Please try again.', 'error');
+        }
+    }
+
+    /**
+     * Forgot password API call with optional Turnstile token
+     */
+    async forgotPassword(email, turnstileToken = null) {
+        const url = this.baseURL + this.endpoints.forgotPassword;
+        
+        // Prepare request body
+        const requestBody = {
+            email: email
+        };
+        
+        // Add Turnstile token if provided
+        if (turnstileToken) {
+            requestBody.turnstileToken = turnstileToken;
+        }
+        
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to send password reset email');
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Forgot password API error:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Handle forgot password request with invisible Turnstile support
+     */
+    async handleForgotPassword(email) {
+        try {
+            console.log('Starting forgot password request for:', email);
+            
+            // First attempt without Turnstile
+            const response = await this.forgotPassword(email);
+            console.log('Forgot password response:', response);
+            
+            if (response.success) {
+                this.showNotification(response.message || 'Password reset code sent successfully! Please check your email.', 'success');
+                
+                // Store email for reset password page
+                sessionStorage.setItem('resetPasswordEmail', email);
+                
+                // Redirect to reset password page
+                setTimeout(() => {
+                    window.location.href = 'reset-password.html';
+                }, 2000);
+                
+            } else if (response.turnstileRequired) {
+                // Handle Turnstile requirement
+                await this.handleTurnstileRequiredForgotPassword(email, response);
+            } else {
+                this.showNotification(response.message || 'Failed to send password reset email. Please try again.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Forgot password error:', error);
+            this.showNotification('An error occurred. Please try again.', 'error');
+        }
+    }
+
+    /**
+     * Handle Turnstile requirement for forgot password
+     */
+    async handleTurnstileRequiredForgotPassword(email, initialResponse) {
+        try {
+            console.log('Handling Turnstile requirement for forgot password');
+            console.log('Initial response:', initialResponse);
+            
+            // Show a notification that security verification is required
+            this.showNotification('Security verification required. Please complete the security check.', 'info');
+            
+            // Execute invisible Turnstile
+            const turnstileToken = await this.executeInvisibleTurnstile('forgot_password');
+            
+            if (!turnstileToken) {
+                this.showNotification('Security verification failed. Please try again.', 'error');
+                return;
+            }
+            
+            console.log('Turnstile token obtained, sending forgot password request with token');
+            
+            // Send forgot password with Turnstile token
+            const response = await this.forgotPassword(email, turnstileToken);
+            
+            console.log('Turnstile forgot password response:', response);
+            
+            if (response.success) {
+                this.showNotification(response.message || 'Password reset code sent successfully! Please check your email.', 'success');
+                
+                // Store email for reset password page
+                sessionStorage.setItem('resetPasswordEmail', email);
+                
+                // Redirect to reset password page
+                setTimeout(() => {
+                    window.location.href = 'reset-password.html';
+                }, 2000);
+                
+                // Log that Turnstile was used
+                console.log('Forgot password successful with Turnstile:', {
+                    email,
+                    abuseReason: response.data?.abuseReason,
+                    turnstileUsed: response.data?.turnstileUsed
+                });
+            } else {
+                this.showNotification(response.message || 'Failed to send password reset email. Please try again.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Turnstile forgot password error:', error);
+            this.showNotification('Security verification failed. Please try again.', 'error');
+        }
+    }
+
+    /**
+     * Resend forgot code API call with optional Turnstile token
+     */
+    async resendForgotCode(email, turnstileToken = null) {
+        const url = this.baseURL + this.endpoints.resendForgotCode;
+        
+        // Prepare request body
+        const requestBody = {
+            email: email
+        };
+        
+        // Add Turnstile token if provided
+        if (turnstileToken) {
+            requestBody.turnstileToken = turnstileToken;
+        }
+        
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to resend password reset code');
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Resend forgot code API error:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Handle resend forgot code request with invisible Turnstile support
+     */
+    async handleResendForgotCode(email) {
+        try {
+            console.log('Starting resend forgot code request for:', email);
+            
+            // First attempt without Turnstile
+            const response = await this.resendForgotCode(email);
+            console.log('Resend forgot code response:', response);
+            
+            if (response.success) {
+                this.showNotification(response.message || 'New password reset code sent successfully! Please check your email.', 'success');
+                
+            } else if (response.turnstileRequired) {
+                // Handle Turnstile requirement
+                await this.handleTurnstileRequiredResendForgotCode(email, response);
+            } else {
+                this.showNotification(response.message || 'Failed to resend password reset code. Please try again.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Resend forgot code error:', error);
+            this.showNotification('An error occurred. Please try again.', 'error');
+        }
+    }
+
+    /**
+     * Handle Turnstile requirement for resend forgot code
+     */
+    async handleTurnstileRequiredResendForgotCode(email, initialResponse) {
+        try {
+            console.log('Handling Turnstile requirement for resend forgot code');
+            console.log('Initial response:', initialResponse);
+            
+            // Show a notification that security verification is required
+            this.showNotification('Security verification required. Please complete the security check.', 'info');
+            
+            // Execute invisible Turnstile
+            const turnstileToken = await this.executeInvisibleTurnstile('resend_forgot_code');
+            
+            if (!turnstileToken) {
+                this.showNotification('Security verification failed. Please try again.', 'error');
+                return;
+            }
+            
+            console.log('Turnstile token obtained, sending resend forgot code request with token');
+            
+            // Send resend forgot code with Turnstile token
+            const response = await this.resendForgotCode(email, turnstileToken);
+            
+            console.log('Turnstile resend forgot code response:', response);
+            
+            if (response.success) {
+                this.showNotification(response.message || 'New password reset code sent successfully! Please check your email.', 'success');
+                
+                // Log that Turnstile was used
+                console.log('Resend forgot code successful with Turnstile:', {
+                    email,
+                    abuseReason: response.data?.abuseReason,
+                    turnstileUsed: response.data?.turnstileUsed
+                });
+            } else {
+                this.showNotification(response.message || 'Failed to resend password reset code. Please try again.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Turnstile resend forgot code error:', error);
+            this.showNotification('Security verification failed. Please try again.', 'error');
+        }
+    }
+
+    /**
+     * Reset password API call with optional Turnstile token
+     */
+    async resetPassword(email, otpCode, newPassword, turnstileToken = null) {
+        const url = this.baseURL + this.endpoints.resetPassword;
+        
+        // Prepare request body
+        const requestBody = {
+            email: email,
+            otpCode: otpCode,
+            newPassword: newPassword
+        };
+        
+        // Add Turnstile token if provided
+        if (turnstileToken) {
+            requestBody.turnstileToken = turnstileToken;
+        }
+        
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody)
+            });
+            
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || 'Failed to reset password');
+            }
+            
+            return data;
+        } catch (error) {
+            console.error('Reset password API error:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Handle reset password request with invisible Turnstile support
+     */
+    async handleResetPassword(email, otpCode, newPassword) {
+        try {
+            console.log('Starting reset password request for:', email);
+            
+            // First attempt without Turnstile
+            const response = await this.resetPassword(email, otpCode, newPassword);
+            console.log('Reset password response:', response);
+            
+            if (response.success) {
+                this.showNotification(response.message || 'Password reset successfully! You can now log in with your new password.', 'success');
+                
+                // Redirect to login page after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 3000);
+                
+            } else if (response.turnstileRequired) {
+                // Handle Turnstile requirement
+                await this.handleTurnstileRequiredResetPassword(email, otpCode, newPassword, response);
+            } else {
+                this.showNotification(response.message || 'Failed to reset password. Please try again.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Reset password error:', error);
+            this.showNotification('An error occurred. Please try again.', 'error');
+        }
+    }
+
+    /**
+     * Handle Turnstile requirement for reset password
+     */
+    async handleTurnstileRequiredResetPassword(email, otpCode, newPassword, initialResponse) {
+        try {
+            console.log('Handling Turnstile requirement for reset password');
+            console.log('Initial response:', initialResponse);
+            
+            // Show a notification that security verification is required
+            this.showNotification('Security verification required. Please complete the security check.', 'info');
+            
+            // Execute invisible Turnstile
+            const turnstileToken = await this.executeInvisibleTurnstile('reset_password');
+            
+            if (!turnstileToken) {
+                this.showNotification('Security verification failed. Please try again.', 'error');
+                return;
+            }
+            
+            console.log('Turnstile token obtained, sending reset password request with token');
+            
+            // Send reset password with Turnstile token
+            const response = await this.resetPassword(email, otpCode, newPassword, turnstileToken);
+            
+            console.log('Turnstile reset password response:', response);
+            
+            if (response.success) {
+                this.showNotification(response.message || 'Password reset successfully! You can now log in with your new password.', 'success');
+                
+                // Redirect to login page after 3 seconds
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 3000);
+                
+                // Log that Turnstile was used
+                console.log('Reset password successful with Turnstile:', {
+                    email,
+                    abuseReason: response.data?.abuseReason,
+                    turnstileUsed: response.data?.turnstileUsed
+                });
+            } else {
+                this.showNotification(response.message || 'Failed to reset password. Please try again.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Turnstile reset password error:', error);
             this.showNotification('Security verification failed. Please try again.', 'error');
         }
     }
