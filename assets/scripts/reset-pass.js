@@ -458,4 +458,12 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Password toggle button clicked via document listener!');
         }
     });
+
+    // Initialize AWS Auth Service
+    if (typeof AWSAuthService !== 'undefined') {
+        window.awsAuth = new AWSAuthService();
+        console.log('AWS Auth Service initialized for reset password page');
+    } else {
+        console.error('AWSAuthService not found. Make sure aws-auth.js is loaded before reset-pass.js');
+    }
 });
