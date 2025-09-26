@@ -449,9 +449,9 @@ class AWSAuthService {
     }
 
     /**
-     * Resend verification code API call
+     * Resend verification code API call with optional Turnstile token
      */
-    async resendVerification(email) {
+    async resendVerification(email, turnstileToken = null) {
         const url = this.baseURL + this.endpoints.resendVerification;
         
         // Prepare request body
@@ -459,10 +459,16 @@ class AWSAuthService {
             email: email
         };
         
+        // Add Turnstile token if provided
+        if (turnstileToken) {
+            requestBody.turnstileToken = turnstileToken;
+        }
+        
         // Debug logging
         console.log('Resending verification code for:', { 
             email, 
-            requestBody 
+            hasTurnstileToken: !!turnstileToken,
+            requestBody: { ...requestBody, turnstileToken: turnstileToken ? '[PROVIDED]' : '[NOT_PROVIDED]' }
         });
         
         const response = await fetch(url, {
@@ -488,7 +494,7 @@ class AWSAuthService {
                 status: response.status,
                 statusText: response.statusText,
                 result,
-                requestBody
+                requestBody: { ...requestBody, turnstileToken: turnstileToken ? '[PROVIDED]' : '[NOT_PROVIDED]' }
             });
             throw new Error(result.message || `Resend verification failed with status ${response.status}`);
         }
@@ -497,7 +503,7 @@ class AWSAuthService {
     }
 
     /**
-     * Resend verification code
+     * Resend verification code with invisible Turnstile support
      */
     async resendVerificationCode() {
         const email = this.getStoredEmail();
@@ -510,13 +516,20 @@ class AWSAuthService {
         try {
             this.setResendButtonLoading(true);
             
+            // First attempt without Turnstile
             const response = await this.resendVerification(email);
             
             if (response.success) {
                 this.showNotification(response.message || 'New verification code sent successfully! Please check your email.', 'success');
                 this.startResendTimer();
             } else {
-                this.showNotification(response.message || 'Failed to resend verification code. Please try again.', 'error');
+                // Check if Turnstile is required
+                if (response.turnstileRequired) {
+                    console.log('Turnstile required for resend verification:', response.abuseReason);
+                    await this.handleTurnstileRequiredResend(email, response);
+                } else {
+                    this.showNotification(response.message || 'Failed to resend verification code. Please try again.', 'error');
+                }
             }
             
         } catch (error) {
@@ -532,6 +545,9 @@ class AWSAuthService {
                     errorMessage = error.message;
                 } else if (error.message.includes('bounced')) {
                     errorMessage = error.message;
+                } else if (error.message.includes('TURNSTILE_REQUIRED')) {
+                    // This shouldn't happen in catch block, but just in case
+                    errorMessage = 'Security verification required. Please try again.';
                 } else {
                     errorMessage = error.message;
                 }
@@ -540,6 +556,47 @@ class AWSAuthService {
             this.showNotification(errorMessage, 'error');
         } finally {
             this.setResendButtonLoading(false);
+        }
+    }
+
+    /**
+     * Handle Turnstile requirement for resend verification
+     */
+    async handleTurnstileRequiredResend(email, initialResponse) {
+        try {
+            console.log('Handling Turnstile requirement for resend verification');
+            
+            // Show a notification that security verification is required
+            this.showNotification('Security verification required. Please complete the security check.', 'info');
+            
+            // Execute invisible Turnstile
+            const turnstileToken = await this.executeInvisibleTurnstile('resend_verification');
+            
+            if (!turnstileToken) {
+                this.showNotification('Security verification failed. Please try again.', 'error');
+                return;
+            }
+            
+            // Retry resend with Turnstile token
+            const response = await this.resendVerification(email, turnstileToken);
+            
+            if (response.success) {
+                this.showNotification(response.message || 'New verification code sent successfully! Please check your email.', 'success');
+                this.startResendTimer();
+                
+                // Log that Turnstile was used
+                console.log('Resend verification successful with Turnstile:', {
+                    email,
+                    abuseReason: response.data?.abuseReason,
+                    turnstileUsed: response.data?.turnstileUsed
+                });
+            } else {
+                this.showNotification(response.message || 'Failed to resend verification code. Please try again.', 'error');
+            }
+            
+        } catch (error) {
+            console.error('Turnstile resend verification error:', error);
+            this.showNotification('Security verification failed. Please try again.', 'error');
         }
     }
 
@@ -859,6 +916,85 @@ class AWSAuthService {
             this.turnstileWidgetId = null;
         }
         window.turnstileToken = null;
+    }
+
+    /**
+     * Execute invisible Turnstile for resend verification
+     */
+    async executeInvisibleTurnstile(action = 'resend_verification') {
+        return new Promise((resolve, reject) => {
+            try {
+                // Check if Turnstile is available
+                if (typeof turnstile === 'undefined') {
+                    console.error('Turnstile not loaded');
+                    reject(new Error('Security verification not available'));
+                    return;
+                }
+
+                // Check if we have a site key
+                if (!window.TURNSTILE_CONFIG?.siteKey) {
+                    console.error('Turnstile site key not configured');
+                    reject(new Error('Security verification not configured'));
+                    return;
+                }
+
+                // Create a temporary container for the invisible widget
+                const tempContainer = document.createElement('div');
+                tempContainer.style.display = 'none';
+                document.body.appendChild(tempContainer);
+
+                // Render invisible Turnstile widget
+                const widgetId = turnstile.render(tempContainer, {
+                    sitekey: window.TURNSTILE_CONFIG.siteKey,
+                    callback: (token) => {
+                        console.log('Invisible Turnstile verification successful for:', action);
+                        window.turnstileToken = token;
+                        
+                        // Clean up
+                        turnstile.remove(widgetId);
+                        document.body.removeChild(tempContainer);
+                        
+                        resolve(token);
+                    },
+                    'error-callback': (error) => {
+                        console.error('Invisible Turnstile verification failed:', error);
+                        window.turnstileToken = null;
+                        
+                        // Clean up
+                        turnstile.remove(widgetId);
+                        document.body.removeChild(tempContainer);
+                        
+                        reject(new Error('Security verification failed'));
+                    },
+                    'expired-callback': () => {
+                        console.log('Invisible Turnstile token expired');
+                        window.turnstileToken = null;
+                        
+                        // Clean up
+                        turnstile.remove(widgetId);
+                        document.body.removeChild(tempContainer);
+                        
+                        reject(new Error('Security verification expired'));
+                    },
+                    theme: window.TURNSTILE_CONFIG.theme || 'light',
+                    size: 'invisible',
+                    action: action
+                });
+
+                // Execute the invisible challenge immediately
+                if (widgetId) {
+                    turnstile.execute(tempContainer);
+                } else {
+                    // Clean up if render failed
+                    document.body.removeChild(tempContainer);
+                    reject(new Error('Failed to initialize security verification'));
+                }
+
+            } catch (error) {
+                console.error('Error executing invisible Turnstile:', error);
+                reject(error);
+            }
+        });
     }
 }
 
