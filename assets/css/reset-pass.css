@@ -1,0 +1,730 @@
+/* Reset Password Form Styles - Based on Register.css */
+
+/* Override main padding for reset password page */
+.main {
+    padding-top: 11rem !important;
+    padding-bottom: 0 !important;
+}
+
+@media (max-width: 768px) {
+    .main {
+        padding-top: 11rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .main {
+        padding-top: 11rem !important;
+    }
+}
+
+/* Prevent conflicts with login modal input-wrapper styles */
+.input-wrapper {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+.input-wrapper i {
+    position: absolute !important;
+    left: 0.8rem !important;
+    color: #6b7280 !important;
+    z-index: 2 !important;
+    font-size: 0.9rem !important;
+}
+
+.input-wrapper input {
+    width: 100% !important;
+    padding: 0.75rem 2.5rem 0.75rem 2.5rem !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    font-size: 0.9rem !important;
+    transition: all 0.3s ease !important;
+    background: #f9fafb !important;
+}
+
+.input-wrapper input:focus {
+    outline: none !important;
+    border-color: #ef4444 !important;
+    background: white !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+}
+
+/* Main wrapper */
+.register-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    background: #f8f9fa;
+    padding: 0.5rem 0;
+    /* Mobile viewport optimization */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+/* Main page container */
+.register-page-container {
+    display: flex;
+    min-height: calc(100vh - 1rem);
+    background: white;
+    max-width: 1200px;
+    margin: 0 auto;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Left side - Welcome section */
+.welcome-section {
+    flex: 1;
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    animation: gradientShift 8s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+    0%, 100% { background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%); }
+    50% { background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #ef4444 100%); }
+}
+
+.welcome-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 100%);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100px); }
+    100% { transform: translateX(100px); }
+}
+
+.welcome-content {
+    text-align: center;
+    color: white;
+    padding: 2rem;
+    z-index: 2;
+    position: relative;
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    line-height: 1.2;
+}
+
+.welcome-subtitle {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.95;
+    max-width: 400px;
+    margin: 0 auto;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Right side - Form section */
+.form-section {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: white;
+}
+
+.form-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Form styles */
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.form-group input {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    background: #f9fafb;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #ef4444;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.form-group input:invalid {
+    border-color: #ef4444;
+}
+
+/* Password toggle - using same style as login modal */
+.password-toggle {
+    position: absolute;
+    right: 0.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    z-index: 3;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+}
+
+.password-toggle:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    transform: translateY(-50%) scale(1.05);
+}
+
+/* OTP Input Container */
+.otp-inputs-container {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.otp-input {
+    width: 3rem !important;
+    height: 3rem;
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f9fafb;
+    transition: all 0.3s ease;
+    padding: 0 !important;
+}
+
+.otp-input:focus {
+    outline: none;
+    border-color: #ef4444;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.otp-input.filled {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+/* OTP Actions */
+.otp-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.resend-otp-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.resend-otp-btn:hover {
+    color: #dc2626;
+}
+
+.resend-otp-btn:disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.resend-timer {
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Password Requirements */
+.password-requirements {
+    margin-top: 0.75rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.requirements-title {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.requirements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+    transition: color 0.3s ease;
+}
+
+.requirement i {
+    font-size: 0.7rem;
+    transition: color 0.3s ease;
+}
+
+.requirement.valid {
+    color: #10b981;
+}
+
+.requirement.valid i {
+    color: #10b981;
+}
+
+.requirement.valid i::before {
+    content: "\f00c";
+}
+
+/* Password Match Indicator */
+.password-match {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #ef4444;
+    transition: all 0.3s ease;
+}
+
+.password-match.valid {
+    color: #10b981;
+}
+
+.password-match.valid i::before {
+    content: "\f00c";
+}
+
+.password-match.hidden {
+    display: none;
+}
+
+/* Submit Button */
+.register-submit-btn {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    color: white;
+    border: none;
+    padding: 0.875rem 2rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.register-submit-btn:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, #dc2626 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.register-submit-btn:active {
+    transform: translateY(0);
+}
+
+.register-submit-btn:disabled {
+    background: #9ca3af;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Reset Footer */
+.reset-footer {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.reset-footer p {
+    color: #6b7280;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.back-to-login {
+    color: #ef4444;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.back-to-login:hover {
+    color: #dc2626;
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main {
+        padding-top: 9rem !important;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    .register-wrapper {
+        padding: 0.25rem 0;
+    }
+    
+    .register-page-container {
+        flex-direction: column;
+        min-height: auto;
+        border-radius: 12px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        margin: 0;
+        max-width: 100%;
+    }
+    
+    .welcome-section {
+        min-height: 200px;
+        padding: 1.5rem;
+        order: 1;
+    }
+    
+    .welcome-title {
+        font-size: 1.8rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .welcome-subtitle {
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+    
+    .form-section {
+        padding: 2rem 1.5rem;
+        order: 2;
+    }
+    
+    .form-container {
+        max-width: 100%;
+    }
+    
+    .otp-inputs-container {
+        gap: 0.5rem;
+        margin: 1.5rem 0;
+    }
+    
+    .otp-input {
+        width: 2.5rem !important;
+        height: 2.5rem;
+        font-size: 1rem;
+    }
+    
+    .register-submit-btn {
+        margin-top: 1.5rem;
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+    
+    .password-requirements {
+        margin-top: 1rem;
+        padding: 0.75rem;
+    }
+    
+    .requirements-title {
+        font-size: 0.8rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .requirement {
+        font-size: 0.75rem;
+        gap: 0.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main {
+        padding-top: 8rem !important;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    .register-page-container {
+        border-radius: 8px;
+        margin: 0;
+    }
+    
+    .welcome-section {
+        min-height: 150px;
+        padding: 1rem;
+    }
+    
+    .welcome-title {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .welcome-subtitle {
+        font-size: 0.9rem;
+        line-height: 1.4;
+    }
+    
+    .form-section {
+        padding: 1.5rem 1rem;
+    }
+    
+    .otp-inputs-container {
+        gap: 0.25rem;
+        margin: 1.25rem 0;
+    }
+    
+    .otp-input {
+        width: 2.25rem !important;
+        height: 2.25rem;
+        font-size: 0.9rem;
+    }
+    
+    .register-form {
+        gap: 1.25rem;
+    }
+    
+    .register-submit-btn {
+        margin-top: 1.25rem;
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+    
+    .form-group input {
+        padding: 0.75rem 1rem;
+        font-size: 1rem; /* Prevents zoom on iOS */
+    }
+    
+    .password-toggle {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .password-requirements {
+        margin-top: 0.75rem;
+        padding: 0.75rem;
+    }
+    
+    .requirements-title {
+        font-size: 0.75rem;
+    }
+    
+    .requirement {
+        font-size: 0.7rem;
+        gap: 0.3rem;
+    }
+    
+    .reset-footer {
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+    }
+    
+    .reset-footer p {
+        font-size: 0.85rem;
+    }
+}
+
+/* Touch-friendly optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .register-submit-btn {
+        min-height: 48px;
+        padding: 1rem 2rem;
+    }
+    
+    .form-group input {
+        min-height: 48px;
+        font-size: 16px; /* Prevents zoom on iOS */
+    }
+    
+    .password-toggle {
+        min-width: 48px;
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .otp-input {
+        min-height: 48px;
+        font-size: 1.1rem;
+    }
+    
+    .resend-otp-btn {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Landscape mobile optimization */
+@media (max-width: 768px) and (orientation: landscape) {
+    .main {
+        padding-top: 4rem !important;
+    }
+    
+    .register-page-container {
+        min-height: auto;
+    }
+    
+    .welcome-section {
+        min-height: 120px;
+        padding: 1rem 1.5rem;
+    }
+    
+    .welcome-title {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .welcome-subtitle {
+        font-size: 0.85rem;
+    }
+    
+    .form-section {
+        padding: 1rem 1.5rem;
+    }
+    
+    .otp-inputs-container {
+        margin: 1rem 0;
+    }
+}
+
+/* Loading States */
+.register-submit-btn.loading {
+    position: relative;
+    color: transparent;
+}
+
+.register-submit-btn.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Error States */
+.form-group.error input {
+    border-color: #ef4444;
+    background: #fef2f2;
+}
+
+.form-group.error .form-error {
+    display: block;
+    color: #ef4444;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+}
+
+.form-error {
+    display: none;
+}
+
+/* Success States */
+.form-group.success input {
+    border-color: #10b981;
+    background: #f0fdf4;
+}
+
+/* Focus States */
+.form-group input:focus {
+    border-color: #ef4444;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+/* Animation for form elements */
+.form-group {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

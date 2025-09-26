@@ -1,0 +1,802 @@
+/* Local Business Subscriptions Page Styling */
+
+/* Main Content Container */
+.main-content-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Breadcrumb Navigation */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb a {
+    color: #dc2626;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb a:hover {
+    color: #b91c1c;
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.breadcrumb span:last-child {
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Content Container */
+.content-container {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+}
+
+/* Page Heading */
+.page-heading {
+    color: #111827;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+/* Business Membership Container */
+.business-membership-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Benefits Section */
+.benefits-section {
+    background: linear-gradient(135deg, #fef2f2 0%, #fef7f7 100%);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #fecaca;
+}
+
+.benefits-title {
+    color: #dc2626;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    justify-content: center;
+}
+
+.benefits-title i {
+    font-size: 1.25rem;
+    color: #f59e0b;
+}
+
+.benefits-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+    border-color: #fecaca;
+}
+
+.benefit-item i {
+    color: #10b981;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.benefit-text {
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* Pricing Section */
+.pricing-section {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e5e7eb;
+}
+
+.pricing-title {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    justify-content: center;
+}
+
+.pricing-title i {
+    font-size: 1.25rem;
+    color: #dc2626;
+}
+
+/* Billing Toggle */
+.billing-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.billing-option {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+.savings-badge {
+    background: #10b981;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #d1d5db;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #dc2626;
+}
+
+input:checked + .toggle-slider:before {
+    left: 29px;
+}
+
+/* Pricing Grid */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pricing-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.pricing-card.recommended {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Header with Gradient */
+.pricing-card .card-header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.pricing-card:first-child .card-header {
+    background: linear-gradient(135deg, #10b981, #06b6d4);
+}
+
+.pricing-card.recommended .card-header {
+    background: linear-gradient(135deg, #f59e0b, #ec4899);
+}
+
+.pricing-card:last-child .card-header {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+
+.plan-name {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.plan-price {
+    margin-bottom: 0;
+}
+
+.plan-price .price-main {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+    margin: 0;
+}
+
+.plan-price .price-superscript {
+    font-size: 1.25rem;
+    font-weight: 600;
+    vertical-align: super;
+    margin-left: 0.25rem;
+}
+
+.plan-price .price-period {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.annual-total {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+/* Card Body */
+.pricing-card .card-body {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.plan-description {
+    color: #6b7280;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-style: italic;
+}
+
+.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    flex-grow: 1;
+}
+
+.plan-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    color: #374151;
+    padding: 0.25rem 0;
+}
+
+.plan-features li i {
+    color: #10b981;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    width: 14px;
+    text-align: center;
+}
+
+/* Card Footer */
+.pricing-card .card-footer {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.signup-btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.pricing-card:first-child .signup-btn {
+    background: linear-gradient(135deg, #10b981, #06b6d4);
+}
+
+.pricing-card.recommended .signup-btn {
+    background: linear-gradient(135deg, #f59e0b, #ec4899);
+}
+
+.pricing-card:last-child .signup-btn {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+
+
+/* Recommended Badge */
+.pricing-card.recommended::before {
+    content: "Most Popular";
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Section Title */
+.section-title {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    justify-content: center;
+}
+
+.section-title i {
+    font-size: 1.25rem;
+    color: #dc2626;
+}
+
+/* Form Styling */
+#businessMembershipForm {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    border: 1px solid #e5e7eb;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.input-wrapper {
+    position: relative;
+}
+
+.input-wrapper input,
+.input-wrapper select,
+.input-wrapper textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+}
+
+.input-wrapper input:focus,
+.input-wrapper select:focus,
+.input-wrapper textarea:focus {
+    outline: none;
+    border-color: #dc2626;
+}
+
+.input-wrapper textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.input-wrapper select {
+    cursor: pointer;
+}
+
+/* Submit Button */
+.submit-btn {
+    width: 100%;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.submit-btn i {
+    font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content-container {
+        padding: 1rem;
+    }
+    
+    .content-container {
+        padding: 1.5rem;
+    }
+    
+    .page-heading {
+        font-size: 1.5rem;
+    }
+    
+    .benefits-section,
+    .pricing-section,
+    #businessMembershipForm {
+        padding: 1.5rem;
+    }
+    
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pricing-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .pricing-card.recommended {
+        transform: none;
+    }
+    
+    .pricing-card .card-header,
+    .pricing-card .card-body,
+    .pricing-card .card-footer {
+        padding: 1.5rem;
+    }
+    
+    .plan-price .price-main {
+        font-size: 2.5rem;
+    }
+    
+    .billing-toggle {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .benefits-title,
+    .pricing-title,
+    .section-title {
+        font-size: 1.25rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content-container {
+        padding: 0.5rem;
+    }
+    
+    .content-container {
+        padding: 1rem;
+    }
+    
+    .benefits-section,
+    .pricing-section,
+    #businessMembershipForm {
+        padding: 1rem;
+    }
+    
+    .benefit-item {
+        padding: 0.75rem;
+    }
+    
+    .pricing-card {
+        padding: 1.5rem;
+    }
+    
+    .plan-price span {
+        font-size: 1.5rem;
+    }
+    
+    .submit-btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 1rem;
+    }
+}
+
+
+/* Loading state for submit button */
+.submit-btn.loading {
+    background: #6b7280;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+
+/* Success message styling */
+.success-message {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #a7f3d0;
+    margin-bottom: 1rem;
+    display: none;
+}
+
+.success-message.show {
+    display: block;
+}
+
+/* Error message styling */
+.error-message {
+    background: #fef2f2;
+    color: #991b1b;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #fecaca;
+    margin-bottom: 1rem;
+    display: none;
+}
+
+.error-message.show {
+    display: block;
+}
+
+/* Business Membership Modal Styles */
+.business-membership-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 768px) {
+    .business-membership-modal {
+        align-items: flex-start;
+        padding-top: 8rem;
+        justify-content: center;
+    }
+}
+
+.business-membership-modal-container {
+    background-color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.business-membership-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.business-membership-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+.business-membership-modal-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.business-membership-modal-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.business-membership-modal-content h2 {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.business-membership-modal-content p {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+}
+
+.business-membership-form {
+    margin-bottom: 1.5rem;
+}
+
+.business-membership-form .form-group {
+    margin-bottom: 1rem;
+}
+
+.business-membership-form .form-group label {
+    display: block;
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.business-membership-form .input-wrapper input,
+.business-membership-form .input-wrapper select,
+.business-membership-form .input-wrapper textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 25px;
+    font-size: 1rem;
+    background: white;
+}
+
+.business-membership-form .input-wrapper input:focus,
+.business-membership-form .input-wrapper select:focus,
+.business-membership-form .input-wrapper textarea:focus {
+    outline: none;
+    border-color: #dc2626;
+}
+
+.business-membership-form .input-wrapper textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.business-membership-form .input-wrapper select {
+    cursor: pointer;
+}
+
+.business-membership-form .input-wrapper input[readonly] {
+    background-color: #f9fafb;
+    color: #6b7280;
+}
+
+.business-membership-modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+.business-membership-modal-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.business-membership-modal-btn.cancel {
+    background: #6b7280;
+    color: white;
+}
+
+.business-membership-modal-btn.cancel:hover {
+    background: #4b5563;
+}
+
+.business-membership-modal-btn.confirm {
+    background: #dc2626;
+    color: white;
+}
+
+.business-membership-modal-btn.confirm:hover {
+    background: #b91c1c;
+}
+
+/* Responsive Modal Styles */
+@media (max-width: 768px) {
+    .business-membership-modal-container {
+        width: 95%;
+        padding: 1.5rem;
+        margin: 1rem;
+        max-height: calc(100vh - 10rem);
+        overflow-y: auto;
+    }
+    
+    .business-membership-modal-buttons {
+        flex-direction: column;
+    }
+}

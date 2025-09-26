@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Social Media Icons for Email</title>
+    <style>
+        .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            margin: 10px;
+            font-family: Arial, sans-serif;
+        }
+        .facebook { background-color: #1877f2; }
+        .whatsapp { background-color: #25d366; }
+        .instagram { background-color: #e4405f; }
+        
+        .canvas-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Social Media Icons for CompareHubPrices Emails</h2>
+    
+    <div class="canvas-container">
+        <!-- Facebook Icon -->
+        <div>
+            <div class="icon facebook">FB</div>
+            <canvas id="facebook-canvas" width="32" height="32"></canvas>
+        </div>
+        
+        <!-- WhatsApp Icon -->
+        <div>
+            <div class="icon whatsapp">WA</div>
+            <canvas id="whatsapp-canvas" width="32" height="32"></canvas>
+        </div>
+        
+        <!-- Instagram Icon -->
+        <div>
+            <div class="icon instagram">IG</div>
+            <canvas id="instagram-canvas" width="32" height="32"></canvas>
+        </div>
+    </div>
+    
+    <script>
+        function createIcon(canvasId, bgColor, text) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            // Draw circle background
+            ctx.fillStyle = bgColor;
+            ctx.beginPath();
+            ctx.arc(16, 16, 16, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Draw text
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, 16, 16);
+            
+            // Convert to downloadable image
+            const link = document.createElement('a');
+            link.download = canvasId.replace('-canvas', '') + '.png';
+            link.href = canvas.toDataURL();
+            link.textContent = 'Download ' + text;
+            link.style.display = 'block';
+            link.style.margin = '5px 0';
+            canvas.parentNode.appendChild(link);
+        }
+        
+        // Create icons
+        createIcon('facebook-canvas', '#1877f2', 'FB');
+        createIcon('whatsapp-canvas', '#25d366', 'WA');
+        createIcon('instagram-canvas', '#e4405f', 'IG');
+    </script>
+    
+    <p><strong>Instructions:</strong></p>
+    <ol>
+        <li>Click the download links above to save each icon</li>
+        <li>Save them in your <code>assets/images/email/</code> folder</li>
+        <li>Use URLs like: <code>https://comparehubprices.site/assets/images/email/facebook.png</code></li>
+    </ol>
+</body>
+</html>
+
+

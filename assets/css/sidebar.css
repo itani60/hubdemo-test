@@ -1,0 +1,199 @@
+/* ========================================
+   SIDEBAR STYLES
+   Mobile and Tablet Sidebar Styles
+   ======================================== */
+
+/* Sidebar User Section - Logged In State */
+.sidebar-user {
+    padding: 20px;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+    color: white;
+    border-radius: 12px;
+    margin: 15px;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.user-avatar {
+    margin-right: 12px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.user-avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+}
+
+.user-avatar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.user-avatar:hover::before {
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+}
+
+.user-avatar .initials {
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 1;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.user-avatar:hover .initials {
+    transform: scale(1.1);
+}
+
+.user-details {
+    flex: 1;
+}
+
+.user-email {
+    font-weight: 600;
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: white;
+}
+
+.user-status {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.sign-out-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sign-out-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+.sign-out-btn i {
+    font-size: 14px;
+}
+
+/* Sidebar Login Section - Default State */
+.sidebar-login {
+    padding: 20px;
+    text-align: center;
+}
+
+.login-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #ff4757 0%, #ff3742 100%);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+    color: white;
+    text-decoration: none;
+}
+
+.login-btn i {
+    font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar-user {
+        margin: 10px;
+        padding: 15px;
+    }
+    
+    .user-avatar i {
+        font-size: 35px;
+    }
+    
+    .user-email {
+        font-size: 15px;
+    }
+    
+    .sign-out-btn {
+        padding: 8px 16px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar-user {
+        margin: 8px;
+        padding: 12px;
+    }
+    
+    .user-info {
+        margin-bottom: 12px;
+    }
+    
+    .user-avatar i {
+        font-size: 30px;
+    }
+    
+    .user-email {
+        font-size: 14px;
+    }
+    
+    .user-status {
+        font-size: 11px;
+    }
+    
+    .sign-out-btn {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+}

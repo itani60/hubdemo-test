@@ -1,0 +1,432 @@
+/* Hero Carousel Styles for CompareHubPrices */
+
+/* Main Carousel Container */
+.hero-carousel {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.hero-carousel .carousel {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* Carousel Slides */
+.carousel-slide {
+    min-height: 350px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    overflow: hidden;
+}
+
+.carousel-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 1;
+}
+
+/* Individual Slide Themes */
+.electronics-slide {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.fashion-slide {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.home-slide {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.sports-slide {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+/* Carousel Content */
+.carousel-content {
+    position: relative;
+    z-index: 2;
+    color: white;
+    padding: 2rem 0;
+}
+
+.carousel-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(45deg, #ffffff, #f8f9fa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.carousel-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    opacity: 0.95;
+    line-height: 1.6;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Feature Items */
+.carousel-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateX(10px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.feature-item i {
+    font-size: 1.2rem;
+    color: #ffffff;
+    width: 25px;
+    text-align: center;
+}
+
+.feature-item span {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Carousel Button */
+.carousel-btn {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.carousel-btn:hover::before {
+    left: 100%;
+}
+
+.carousel-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6);
+    background: linear-gradient(135deg, #ee5a24, #ff6b6b);
+}
+
+/* Carousel Image */
+.carousel-image {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+/* Full-width background photos */
+.carousel-photo-full {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.carousel-photo-bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: all 0.3s ease;
+}
+
+.carousel-photo-bg:hover {
+    transform: scale(1.05);
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* Carousel Indicators */
+.carousel-indicators {
+    bottom: 2rem;
+    z-index: 3;
+}
+
+.carousel-indicators [data-bs-target] {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    transition: all 0.3s ease;
+    margin: 0 0.5rem;
+}
+
+.carousel-indicators .active {
+    background: white;
+    transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Carousel Controls */
+.carousel-control-prev,
+.carousel-control-next {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 3;
+}
+
+.carousel-control-prev {
+    left: 2rem;
+}
+
+.carousel-control-next {
+    right: 2rem;
+}
+
+.carousel-control-prev:hover,
+.carousel-control-next:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 20px;
+    height: 20px;
+    background-size: 20px 20px;
+}
+
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .carousel-slide {
+        min-height: 300px;
+        padding: 1.5rem 0;
+    }
+    
+    .carousel-title {
+        font-size: 2rem;
+        margin-bottom: 0.8rem;
+    }
+    
+    .carousel-subtitle {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .carousel-features {
+        gap: 0.6rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .feature-item {
+        padding: 0.5rem 0.8rem;
+        gap: 0.6rem;
+    }
+    
+    .feature-item i {
+        font-size: 1rem;
+        width: 20px;
+    }
+    
+    .feature-item span {
+        font-size: 0.9rem;
+    }
+    
+    .carousel-btn {
+        padding: 0.7rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    
+    .carousel-control-prev,
+    .carousel-control-next {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .carousel-control-prev {
+        left: 1rem;
+    }
+    
+    .carousel-control-next {
+        right: 1rem;
+    }
+    
+    .carousel-indicators {
+        bottom: 1rem;
+    }
+    
+    .carousel-indicators [data-bs-target] {
+        width: 8px;
+        height: 8px;
+        margin: 0 0.3rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .carousel-slide {
+        min-height: 280px;
+        padding: 1rem 0;
+    }
+    
+    .carousel-title {
+        font-size: 1.8rem;
+    }
+    
+    .carousel-subtitle {
+        font-size: 0.9rem;
+    }
+    
+    
+    .carousel-btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
+    }
+    
+    .feature-item {
+        padding: 0.4rem 0.6rem;
+        gap: 0.5rem;
+    }
+    
+    .feature-item i {
+        font-size: 0.9rem;
+        width: 18px;
+    }
+    
+    .feature-item span {
+        font-size: 0.8rem;
+    }
+}
+
+/* Animation Enhancements */
+.carousel-item {
+    transition: transform 0.6s ease-in-out;
+}
+
+.carousel-item.active .carousel-content {
+    animation: slideInLeft 0.8s ease-out;
+}
+
+.carousel-item.active .carousel-image {
+    animation: slideInRight 0.8s ease-out;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Auto-play pause on hover */
+.hero-carousel:hover .carousel {
+    animation-play-state: paused;
+}
+
+/* Accessibility improvements */
+.carousel-control-prev:focus,
+.carousel-control-next:focus,
+.carousel-indicators [data-bs-target]:focus {
+    outline: 3px solid rgba(255, 255, 255, 0.8);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .carousel-slide {
+        background: #000;
+    }
+    
+    .carousel-title,
+    .carousel-subtitle,
+    .feature-item span {
+        color: #fff;
+        text-shadow: none;
+    }
+    
+    .feature-item {
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid #fff;
+    }
+    
+    .feature-item span {
+        color: #000;
+    }
+}

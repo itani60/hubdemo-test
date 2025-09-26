@@ -1,0 +1,1020 @@
+/* Business Dashboard Styling - Clean and Simple */
+
+/* Breadcrumb Navigation */
+.breadcrumb-container {
+    max-width: 1000px;
+    margin: 0 auto 1rem auto;
+    padding: 0 2rem;
+}
+
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: #6b7280;
+}
+
+.breadcrumb a {
+    color: #dc2626;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.breadcrumb a:hover {
+    color: #b91c1c;
+    text-decoration: underline;
+}
+
+.breadcrumb-separator {
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+.breadcrumb span:last-child {
+    color: #374151;
+    font-weight: 500;
+}
+
+/* Dashboard Header */
+.dashboard-header {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dashboard-welcome h1 {
+    color: #111827;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-welcome p {
+    color: #6b7280;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Membership Details Section */
+.membership-details-section {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.membership-details-section h2 {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.membership-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.membership-item {
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+.membership-label {
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.membership-value {
+    color: #111827;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.status-active {
+    color: #10b981;
+    background: #d1fae5;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    display: inline-block;
+}
+
+/* Business Information Section */
+.business-info-section {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.business-info-section h2 {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.business-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.business-info-item {
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+.business-info-label {
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+}
+
+.business-info-value {
+    color: #111827;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+/* Membership Benefits Section */
+.membership-benefits-section {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.membership-benefits-section h2 {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.benefits-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+}
+
+.benefit-icon {
+    color: #10b981;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.benefit-text {
+    color: #374151;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Business Update Section */
+.business-update-section {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e5e7eb;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.business-update-section h2 {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.update-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.update-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.upload-products {
+    background: #dc2626;
+    color: white;
+}
+
+.upload-products:hover {
+    background: #b91c1c;
+}
+
+.business-update-info {
+    background: #8b5cf6;
+    color: white;
+}
+
+.business-update-info:hover {
+    background: #7c3aed;
+}
+
+.upgrade-membership {
+    background: #10b981;
+    color: white;
+}
+
+.upgrade-membership:hover {
+    background: #059669;
+}
+
+.cancel-membership {
+    background: #6b7280;
+    color: white;
+}
+
+.cancel-membership:hover {
+    background: #4b5563;
+}
+
+
+/* Modal Styles */
+.upgrade-membership-modal,
+.business-update-modal,
+.upload-products-modal,
+.cancel-membership-modal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.upgrade-membership-modal-container,
+.business-update-modal-container,
+.upload-products-modal-container,
+.cancel-membership-modal-container {
+    background-color: white;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.upgrade-membership-modal-header,
+.business-update-modal-header,
+.upload-products-modal-header,
+.cancel-membership-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.upgrade-membership-modal-close,
+.business-update-modal-close,
+.upload-products-modal-close,
+.cancel-membership-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #6b7280;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.upgrade-membership-modal-close:hover,
+.business-update-modal-close:hover,
+.upload-products-modal-close:hover,
+.cancel-membership-modal-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.upgrade-membership-modal-icon,
+.business-update-modal-icon,
+.upload-products-modal-icon,
+.cancel-membership-modal-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.upgrade-membership-modal-content h2,
+.business-update-modal-content h2,
+.upload-products-modal-content h2,
+.cancel-membership-modal-content h2 {
+    color: #111827;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.upgrade-membership-modal-content p,
+.business-update-modal-content p,
+.upload-products-modal-content p,
+.cancel-membership-modal-content p {
+    color: #6b7280;
+    margin-bottom: 1.5rem;
+}
+
+.business-update-form,
+.upload-products-form {
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.upgrade-membership-modal-buttons,
+.business-update-modal-buttons,
+.upload-products-modal-buttons,
+.cancel-membership-modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
+
+.upgrade-membership-modal-btn,
+.business-update-modal-btn,
+.upload-products-modal-btn,
+.cancel-membership-modal-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.upgrade-membership-modal-btn.cancel,
+.business-update-modal-btn.cancel,
+.upload-products-modal-btn.cancel,
+.cancel-membership-modal-btn.cancel {
+    background: #6b7280;
+    color: white;
+}
+
+.upgrade-membership-modal-btn.cancel:hover,
+.business-update-modal-btn.cancel:hover,
+.upload-products-modal-btn.cancel:hover,
+.cancel-membership-modal-btn.cancel:hover {
+    background: #4b5563;
+}
+
+.upgrade-membership-modal-btn.confirm,
+.business-update-modal-btn.confirm,
+.upload-products-modal-btn.confirm,
+.cancel-membership-modal-btn.confirm {
+    background: #dc2626;
+    color: white;
+}
+
+.upgrade-membership-modal-btn.confirm:hover,
+.business-update-modal-btn.confirm:hover,
+.upload-products-modal-btn.confirm:hover,
+.cancel-membership-modal-btn.confirm:hover {
+    background: #b91c1c;
+}
+
+.upgrade-membership-modal-btn.confirm:disabled,
+.business-update-modal-btn.confirm:disabled,
+.upload-products-modal-btn.confirm:disabled,
+.cancel-membership-modal-btn.confirm:disabled {
+    background: #d1d5db;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .breadcrumb-container {
+        padding: 0 1rem;
+    }
+    
+    .dashboard-header,
+    .membership-details-section,
+    .business-info-section,
+    .membership-benefits-section,
+    .business-update-section {
+        padding: 1.5rem 1rem;
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+    
+    .membership-grid,
+    .business-info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .benefits-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .update-actions {
+        flex-direction: column;
+    }
+    
+    .update-btn {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-welcome h1 {
+        font-size: 1.5rem;
+    }
+    
+    .membership-details-section h2,
+    .business-info-section h2,
+    .membership-benefits-section h2,
+    .business-update-section h2 {
+        font-size: 1.25rem;
+    }
+    
+    .membership-item,
+    .business-info-item,
+    .benefit-item {
+        padding: 0.75rem;
+    }
+}
+
+/* Upgrade Membership Modal Specific Styles */
+.billing-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.billing-option {
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+}
+
+.savings-badge {
+    background: #10b981;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #d1d5db;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-slider {
+    background-color: #dc2626;
+}
+
+input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.membership-plans-comparison {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.plan-option {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.plan-option.selected {
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Plan Header with Gradient */
+.plan-option .plan-header {
+    padding: 1.5rem 1.5rem 1rem 1.5rem;
+    text-align: center;
+    position: relative;
+}
+
+.plan-option:first-child .plan-header {
+    background: linear-gradient(135deg, #10b981, #06b6d4);
+}
+
+.plan-option:last-child .plan-header {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+
+.plan-header h3 {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.plan-price {
+    margin-bottom: 0;
+}
+
+.plan-price .price-main {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+    margin: 0;
+}
+
+.plan-price .price-superscript {
+    font-size: 1.25rem;
+    font-weight: 600;
+    vertical-align: super;
+    margin-left: 0.25rem;
+}
+
+.plan-price .price-period {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.annual-total {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+/* Plan Body */
+.plan-option .plan-features {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.plan-features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem 0;
+    flex-grow: 1;
+}
+
+.plan-features li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.85rem;
+    color: #374151;
+    padding: 0.25rem 0;
+}
+
+.plan-features li i {
+    color: #10b981;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    width: 14px;
+    text-align: center;
+}
+
+/* Plan Footer */
+.plan-option .plan-action {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.plan-select-btn {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.plan-option:first-child .plan-select-btn {
+    background: linear-gradient(135deg, #10b981, #06b6d4);
+}
+
+.plan-option:last-child .plan-select-btn {
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+
+.plan-select-btn.selected {
+    background: #10b981;
+}
+
+.upgrade-terms {
+    background: #f9fafb;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    border: 1px solid #e5e7eb;
+}
+
+.upgrade-terms h3 {
+    color: #111827;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.upgrade-terms ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.upgrade-terms li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.upgrade-terms li:before {
+    content: "•";
+    color: #dc2626;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.upgrade-agreement {
+    margin: 1.5rem 0;
+}
+
+.agreement-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.agreement-checkbox input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: #dc2626;
+}
+
+.checkmark {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.agreement-checkbox input[type="checkbox"]:checked + .checkmark {
+    background: #dc2626;
+    border-color: #dc2626;
+}
+
+.agreement-checkbox input[type="checkbox"]:checked + .checkmark:after {
+    content: "✓";
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* Image Upload Styles */
+.image-upload-area {
+    border: 2px dashed #d1d5db;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f9fafb;
+}
+
+.image-upload-area:hover {
+    border-color: #dc2626;
+    background: #fef2f2;
+}
+
+.upload-placeholder i {
+    font-size: 2rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+.upload-placeholder p {
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.upload-placeholder span {
+    color: #6b7280;
+    font-size: 0.85rem;
+}
+
+.image-preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.image-preview {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+}
+
+.image-preview .remove-image {
+    position: absolute;
+    top: 0.25rem;
+    right: 0.25rem;
+    background: rgba(220, 38, 38, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Cancellation Modal Styles */
+.cancellation-terms {
+    background: #fef2f2;
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    border: 1px solid #fecaca;
+}
+
+.cancellation-terms h3 {
+    color: #dc2626;
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.cancellation-terms ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.cancellation-terms li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #7f1d1d;
+}
+
+.cancellation-terms li:before {
+    content: "⚠";
+    color: #dc2626;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.cancellation-reason {
+    margin: 1.5rem 0;
+}
+
+.cancellation-reason label {
+    display: block;
+    color: #374151;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.cancellation-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 1rem;
+    background: white;
+}
+
+.cancellation-select:focus {
+    outline: none;
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.cancellation-agreement {
+    margin: 1.5rem 0;
+}
+
+/* Responsive Modal Styles */
+@media (max-width: 768px) {
+    .upgrade-membership-modal-container,
+    .business-update-modal-container,
+    .upload-products-modal-container,
+    .cancel-membership-modal-container {
+        width: 95%;
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    .membership-plans-comparison {
+        grid-template-columns: 1fr;
+    }
+    
+    .billing-toggle {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .upgrade-membership-modal-buttons,
+    .business-update-modal-buttons,
+    .upload-products-modal-buttons,
+    .cancel-membership-modal-buttons {
+        flex-direction: column;
+    }
+    
+    .membership-plans-comparison {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .plan-option .plan-header,
+    .plan-option .plan-features,
+    .plan-option .plan-action {
+        padding: 1.5rem;
+    }
+    
+    .plan-price .price-main {
+        font-size: 2.5rem;
+    }
+}
