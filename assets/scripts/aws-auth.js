@@ -638,6 +638,8 @@ class AWSAuthService {
             requestBody.turnstileToken = turnstileToken;
         }
         
+        console.log('Forgot password request:', { url, requestBody });
+        
         try {
             const response = await fetch(url, {
                 method: 'POST',
@@ -647,9 +649,14 @@ class AWSAuthService {
                 body: JSON.stringify(requestBody)
             });
             
+            console.log('Forgot password response status:', response.status);
+            console.log('Forgot password response headers:', response.headers);
+            
             const data = await response.json();
+            console.log('Forgot password response data:', data);
             
             if (!response.ok) {
+                console.error('Forgot password failed:', { status: response.status, data });
                 throw new Error(data.message || 'Failed to send password reset email');
             }
             
@@ -677,10 +684,7 @@ class AWSAuthService {
                 // Store email for reset password page
                 sessionStorage.setItem('resetPasswordEmail', email);
                 
-                // Redirect to reset password page
-                setTimeout(() => {
-                    window.location.href = 'reset-password.html';
-                }, 2000);
+                // Don't redirect here - let the calling page handle it
                 
             } else if (response.turnstileRequired) {
                 // Handle Turnstile requirement

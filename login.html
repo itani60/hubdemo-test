@@ -759,16 +759,24 @@
             sendCodeBtn.querySelector('span').textContent = 'Sending...';
             
             try {
+                console.log('Attempting forgot password for:', email);
+                console.log('AWS Auth service available:', !!awsAuth);
+                console.log('handleForgotPassword function available:', !!(awsAuth && typeof awsAuth.handleForgotPassword === 'function'));
+                
                 // Call AWS Auth service
                 if (awsAuth && typeof awsAuth.handleForgotPassword === 'function') {
-                    await awsAuth.handleForgotPassword(email);
+                    const result = await awsAuth.handleForgotPassword(email);
+                    console.log('Forgot password result:', result);
                     
-                    // Show success step
-                    document.getElementById('forgotPasswordStep1').style.display = 'none';
-                    document.getElementById('forgotPasswordStep2').style.display = 'block';
+                    // Close modal and redirect to reset password page
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+                    if (modal) {
+                        modal.hide();
+                    }
                     
-                    // Update success message with email
-                    document.getElementById('sentEmail').textContent = email;
+                    // Redirect to reset password page
+                    console.log('Redirecting to reset-password.html');
+                    window.location.href = 'reset-password.html';
                     
                 } else {
                     throw new Error('AWS Auth service not available');
@@ -777,8 +785,8 @@
             } catch (error) {
                 console.error('Forgot password error:', error);
                 showFieldError(forgotEmailError, 'Failed to send reset code. Please try again.');
-            } finally {
-                // Reset button state
+                
+                // Reset button state on error
                 sendCodeBtn.disabled = false;
                 sendCodeBtn.querySelector('.loading-spinner').style.display = 'none';
                 sendCodeBtn.querySelector('span').textContent = 'Send Verification Code';
