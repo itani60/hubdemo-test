@@ -15,6 +15,9 @@ class AWSAuthService {
         // Turnstile widget management
         this.turnstileWidgetId = null;
         
+        // Prevent duplicate resend calls
+        this.isResending = false;
+        
         // Initialize when DOM is loaded
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.initialize());
@@ -513,11 +516,22 @@ class AWSAuthService {
             return;
         }
         
+        // Prevent multiple simultaneous calls
+        if (this.isResending) {
+            console.log('Resend already in progress, ignoring duplicate call');
+            return;
+        }
+        
         try {
+            this.isResending = true;
             this.setResendButtonLoading(true);
+            
+            console.log('Starting resend verification for:', email);
             
             // First attempt without Turnstile
             const response = await this.resendVerification(email);
+            
+            console.log('Resend response:', response);
             
             if (response.success) {
                 this.showNotification(response.message || 'New verification code sent successfully! Please check your email.', 'success');
@@ -546,7 +560,6 @@ class AWSAuthService {
                 } else if (error.message.includes('bounced')) {
                     errorMessage = error.message;
                 } else if (error.message.includes('TURNSTILE_REQUIRED')) {
-                    // This shouldn't happen in catch block, but just in case
                     errorMessage = 'Security verification required. Please try again.';
                 } else {
                     errorMessage = error.message;
@@ -555,6 +568,7 @@ class AWSAuthService {
             
             this.showNotification(errorMessage, 'error');
         } finally {
+            this.isResending = false;
             this.setResendButtonLoading(false);
         }
     }
@@ -565,6 +579,7 @@ class AWSAuthService {
     async handleTurnstileRequiredResend(email, initialResponse) {
         try {
             console.log('Handling Turnstile requirement for resend verification');
+            console.log('Initial response:', initialResponse);
             
             // Show a notification that security verification is required
             this.showNotification('Security verification required. Please complete the security check.', 'info');
@@ -577,8 +592,12 @@ class AWSAuthService {
                 return;
             }
             
-            // Retry resend with Turnstile token
+            console.log('Turnstile token obtained, sending resend request with token');
+            
+            // Send resend with Turnstile token (this is the ONLY email send)
             const response = await this.resendVerification(email, turnstileToken);
+            
+            console.log('Turnstile resend response:', response);
             
             if (response.success) {
                 this.showNotification(response.message || 'New verification code sent successfully! Please check your email.', 'success');
