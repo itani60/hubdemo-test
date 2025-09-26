@@ -703,7 +703,7 @@
     <script src="assets/scripts/search.js"></script>
     <script src="assets/scripts/sidebar-header.js"></script>
     <script src="assets/scripts/sidebar-mobile.js"></script>
-    <script src="assets/scripts/login-modal.js"></script>
+  
     <script src="assets/scripts/turnstile-config.js"></script>
     <script src="assets/scripts/aws-auth.js"></script>
     <script src="assets/scripts/login.js"></script>
@@ -711,8 +711,98 @@
    
     <script src="assets/scripts/notifications.js"></script>
   
-    
- 
+    <!-- Forgot Password Functions -->
+    <script>
+        // Initialize AWS Auth Service for login page
+        let awsAuth;
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof AWSAuthService !== 'undefined') {
+                awsAuth = new AWSAuthService();
+                console.log('AWS Auth Service initialized for login page');
+            } else {
+                console.error('AWSAuthService not found. Make sure aws-auth.js is loaded.');
+            }
+        });
+
+        // Open forgot password modal
+        function openForgotModal() {
+            const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
+            modal.show();
+        }
+
+        // Handle forgot password form submission
+        async function handleForgotPassword(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('forgotEmail').value.trim();
+            const sendCodeBtn = document.getElementById('sendCodeBtn');
+            const forgotEmailError = document.getElementById('forgotEmailError');
+            
+            // Clear previous errors
+            forgotEmailError.textContent = '';
+            forgotEmailError.style.display = 'none';
+            
+            // Validate email
+            if (!email) {
+                showFieldError(forgotEmailError, 'Email address is required');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                showFieldError(forgotEmailError, 'Please enter a valid email address');
+                return;
+            }
+            
+            // Show loading state
+            sendCodeBtn.disabled = true;
+            sendCodeBtn.querySelector('.loading-spinner').style.display = 'inline-block';
+            sendCodeBtn.querySelector('span').textContent = 'Sending...';
+            
+            try {
+                // Call AWS Auth service
+                if (awsAuth && typeof awsAuth.handleForgotPassword === 'function') {
+                    await awsAuth.handleForgotPassword(email);
+                    
+                    // Show success step
+                    document.getElementById('forgotPasswordStep1').style.display = 'none';
+                    document.getElementById('forgotPasswordStep2').style.display = 'block';
+                    
+                    // Update success message with email
+                    document.getElementById('forgotEmailDisplay').textContent = email;
+                    
+                } else {
+                    throw new Error('AWS Auth service not available');
+                }
+                
+            } catch (error) {
+                console.error('Forgot password error:', error);
+                showFieldError(forgotEmailError, 'Failed to send reset code. Please try again.');
+            } finally {
+                // Reset button state
+                sendCodeBtn.disabled = false;
+                sendCodeBtn.querySelector('.loading-spinner').style.display = 'none';
+                sendCodeBtn.querySelector('span').textContent = 'Send Verification Code';
+            }
+        }
+
+        // Email validation helper
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        // Show field error helper
+        function showFieldError(errorElement, message) {
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
+        }
+
+        // Clear field error helper
+        function clearFieldError(errorElement) {
+            errorElement.textContent = '';
+            errorElement.style.display = 'none';
+        }
+    </script>
     
 </body>
 </html>
