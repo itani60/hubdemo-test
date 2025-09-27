@@ -187,9 +187,18 @@ class AWSAuthService {
             return;
         }
         
-        // Check if Turnstile is required and get token (implicit rendering)
-        const captchaToken = await this.getCaptchaToken();
+        // Obtain Turnstile token (prefer invisible, programmatic execution)
+        let captchaToken = await this.getCaptchaToken();
+        if (!captchaToken && typeof turnstile !== 'undefined') {
+            try {
+                captchaToken = await this.executeInvisibleTurnstile('register');
+            } catch (e) {
+                console.warn('Turnstile execution for register failed or timed out:', e?.message || e);
+            }
+        }
         if (captchaToken) {
+            // Include both keys for backend compatibility
+            registrationData.turnstileToken = captchaToken;
             registrationData.captchaToken = captchaToken;
         }
         
@@ -204,10 +213,28 @@ class AWSAuthService {
                 this.showNotification('Registration successful! Please check your email for verification code.', 'success');
                 this.hideTurnstileWidget();
             } else {
-                // Check if Turnstile is required
+                // Check if Turnstile is required and retry once with an executed token
                 if (response.code === 'TURNSTILE_REQUIRED' || response.turnstileRequired) {
-                    this.showTurnstileWidget();
-                    this.showRegistrationError('Security verification required. Please complete the verification below.');
+                    try {
+                        const retryToken = await this.executeInvisibleTurnstile('register');
+                        if (retryToken) {
+                            registrationData.turnstileToken = retryToken;
+                            registrationData.captchaToken = retryToken;
+
+                            const retry = await this.register(registrationData);
+                            if (retry.success) {
+                                this.showOTPVerification(registrationData.email);
+                                this.showNotification('Registration successful! Please check your email for verification code.', 'success');
+                                this.hideTurnstileWidget();
+                            } else {
+                                this.showRegistrationError(retry.message || 'Registration failed. Please try again.');
+                            }
+                            return;
+                        }
+                    } catch (e) {
+                        console.error('Turnstile retry failed:', e);
+                    }
+                    this.showRegistrationError('Security verification required. Please try again.');
                 } else {
                     this.showRegistrationError(response.message || 'Registration failed. Please try again.');
                 }
@@ -1355,37 +1382,54 @@ class AWSAuthService {
     }
 
     /**
-     * Execute Turnstile for resend verification (Implicit rendering)
+     * Execute Turnstile in invisible mode and wait for token
+     * Uses the implicitly rendered widget and programmatically executes it.
      */
     async executeInvisibleTurnstile(action = 'resend_verification') {
         return new Promise((resolve, reject) => {
             try {
-                // For implicit rendering, check if token is already available
-                const turnstileResponse = document.querySelector('input[name="cf-turnstile-response"]');
-                if (turnstileResponse && turnstileResponse.value) {
-                    console.log('Turnstile token already available for:', action);
-                    resolve(turnstileResponse.value);
+                if (typeof turnstile === 'undefined') {
+                    reject(new Error('Turnstile not loaded'));
                     return;
                 }
 
-                // If no token, wait a bit for user to complete the challenge
-                // In implicit rendering, the widget is always visible, so user needs to complete it
-                const checkToken = setInterval(() => {
-                    const currentToken = document.querySelector('input[name="cf-turnstile-response"]');
-                    if (currentToken && currentToken.value) {
-                        clearInterval(checkToken);
-                        console.log('Turnstile verification successful for:', action);
-                        resolve(currentToken.value);
+                // Clear any previous token to avoid stale values
+                const hidden = document.querySelector('input[name="cf-turnstile-response"]');
+                if (hidden) hidden.value = '';
+
+                // Choose a container close to the active flow if possible
+                const registerForm = document.getElementById('registerForm');
+                const loginForm = document.getElementById('loginForm');
+                let containerEl = (registerForm && registerForm.querySelector('.cf-turnstile'))
+                                || (loginForm && loginForm.querySelector('.cf-turnstile'))
+                                || document.querySelector('.cf-turnstile');
+
+                // Ensure container has an id so we can execute by selector reliably
+                if (containerEl && !containerEl.id) {
+                    containerEl.id = 'turnstile-widget-' + Math.random().toString(36).slice(2, 8);
+                }
+                const containerSelector = containerEl ? ('#' + containerEl.id) : '.cf-turnstile';
+
+                // Execute when Turnstile is ready
+                turnstile.ready(() => {
+                    try {
+                        turnstile.execute(containerSelector, { action });
+                    } catch (execErr) {
+                        console.warn('turnstile.execute failed, will still poll for a token if available:', execErr);
                     }
-                }, 500);
 
-                // Timeout after 30 seconds
-                setTimeout(() => {
-                    clearInterval(checkToken);
-                    console.error('Turnstile verification timeout for:', action);
-                    reject(new Error('Security verification timeout'));
-                }, 30000);
-
+                    const startedAt = Date.now();
+                    const poll = setInterval(() => {
+                        const input = document.querySelector('input[name="cf-turnstile-response"]');
+                        if (input && input.value) {
+                            clearInterval(poll);
+                            resolve(input.value);
+                        } else if (Date.now() - startedAt > 30000) {
+                            clearInterval(poll);
+                            reject(new Error('Security verification timeout'));
+                        }
+                    }, 250);
+                });
             } catch (error) {
                 console.error('Error executing Turnstile:', error);
                 reject(error);

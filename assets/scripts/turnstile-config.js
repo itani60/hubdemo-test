@@ -6,20 +6,20 @@
  */
 
 window.TURNSTILE_CONFIG = {
-    // Cloudflare Turnstile site key (Production key)
-    siteKey: '0x4AAAAAAB3faEFmb8ePRkfo',
+     // Cloudflare Turnstile site key (Production key)
+        siteKey: '0x4AAAAAAB3qNtVK4DShvWVn',
 
     // Turnstile theme options (matches HTML data-theme)
     theme: 'light', // 'light', 'dark', or 'auto'
 
     // Turnstile size options (matches HTML data-size for implicit rendering)
-    size: 'normal', // 'normal' for visible widget, 'invisible' for hidden
+    size: 'invisible', // 'normal' for visible widget, 'invisible' for hidden
 
     // Execution mode - when to run the challenge
-    execution: 'render', // 'render' for automatic execution on page load
+    execution: 'execute', // 'execute' for programmatic execution (recommended for invisible)
 
     // Appearance mode - when the widget is visible
-    appearance: 'always', // 'always' for visible widget
+    appearance: 'execute', // 'execute' = widget only appears while executing (invisible UX)
     
     // Language (optional)
     language: 'en',

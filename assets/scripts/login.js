@@ -63,12 +63,65 @@ function setupFormValidation() {
 }
 
 /**
- * Setup Turnstile integration (implicit rendering)
+ * Setup Turnstile integration (invisible mode)
  */
 function setupTurnstileIntegration() {
-    // For implicit rendering, Turnstile automatically handles the widget
-    // The token will be available in the hidden form field when completed
-    console.log('Turnstile implicit rendering setup for login page');
+    console.log('Turnstile invisible mode setup for login page');
+
+    const container = document.querySelector('.cf-turnstile');
+    if (!container) {
+        console.warn('Turnstile container not found on login page');
+        return;
+    }
+
+    // Ensure stable selector and correct attributes for invisible/programmatic execution
+    if (!container.id) {
+        container.id = 'login-turnstile-' + Math.random().toString(36).slice(2, 8);
+    }
+    container.setAttribute('data-size', 'invisible');
+    container.setAttribute('data-action', 'login');
+    container.setAttribute('data-execution', 'execute');
+    container.setAttribute('data-appearance', 'execute');
+
+    if (typeof turnstile === 'undefined') {
+        console.warn('Turnstile library not loaded yet');
+        return;
+    }
+    turnstile.ready(() => {
+        console.log('Turnstile ready on login page');
+    });
+}
+
+/**
+ * Turnstile success callback (invisible mode)
+ */
+function onTurnstileSuccess(token) {
+    console.log('Turnstile verification successful');
+
+    // Get form data and submit with token
+    const emailInput = document.getElementById('loginEmail');
+    const passwordInput = document.getElementById('loginPassword');
+
+    if (emailInput && passwordInput) {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        // Submit login data with Turnstile token
+        submitLoginData(email, password, token);
+    } else {
+        console.error('Form inputs not found');
+        setLoginLoading(false);
+        showLoginError('Form error. Please try again.');
+    }
+}
+
+/**
+ * Turnstile error callback (invisible mode)
+ */
+function onTurnstileError(error) {
+    console.error('Turnstile verification failed:', error);
+    setLoginLoading(false);
+    showLoginError('Security verification failed. Please try again.');
 }
 
 /**
@@ -147,75 +200,131 @@ function clearFieldError(input) {
  */
 async function handleLogin(event) {
     event.preventDefault();
-    
+
     const emailInput = document.getElementById('loginEmail');
     const passwordInput = document.getElementById('loginPassword');
     const submitBtn = document.getElementById('loginSubmitBtn');
-    
+
     // Validate form
     const isEmailValid = validateEmail();
     const isPasswordValid = validatePassword();
-    
+
     if (!isEmailValid || !isPasswordValid) {
         showLoginError('Please fix the errors above and try again.');
         return;
     }
-    
+
     const email = emailInput.value.trim();
     const password = passwordInput.value;
-    
+
     if (!email || !password) {
         showLoginError('Please fill in all required fields.');
         return;
     }
-    
+
     // Show loading state
     setLoginLoading(true);
     hideLoginMessages();
-    
+
     try {
-        // Check if Turnstile is required
+        // For invisible mode, execute Turnstile and wait for callback
+        if (typeof turnstile !== 'undefined') {
+            const container = document.querySelector('.cf-turnstile');
+            if (container) {
+                // Clear any previous token from hidden input to avoid stale values
+                const hidden = document.querySelector('input[name="cf-turnstile-response"]');
+                if (hidden) hidden.value = '';
+
+                const selector = container.id ? ('#' + container.id) : '.cf-turnstile';
+                turnstile.ready(() => {
+                    try {
+                        turnstile.execute(selector, { action: 'login' });
+                    } catch (execErr) {
+                        console.error('Turnstile execute failed:', execErr);
+                        // Fallback: proceed without token
+                        submitLoginData(email, password);
+                    }
+                });
+            } else {
+                console.warn('Turnstile container not found, proceeding without verification');
+                await submitLoginData(email, password);
+            }
+        } else {
+            // Fallback if Turnstile not loaded
+            console.warn('Turnstile not loaded, proceeding without verification');
+            await submitLoginData(email, password);
+        }
+
+    } catch (error) {
+        console.error('Login error:', error);
+        showLoginError('Login failed. Please try again.');
+        setLoginLoading(false);
+    }
+}
+
+/**
+ * Submit login data after Turnstile verification
+ */
+async function submitLoginData(email, password, turnstileToken = null) {
+    try {
         const loginData = {
             email: email,
             password: password,
             rememberMe: document.getElementById('rememberMe').checked
         };
-        
-        // Get Turnstile token if available
-        const turnstileToken = await getLoginCaptchaToken();
+
+        // Include Turnstile token if provided
         if (turnstileToken) {
             loginData.turnstileToken = turnstileToken;
         }
-        
-        // Simulate login API call (replace with actual API)
-        const response = await simulateLoginAPI(loginData);
-        
+
+        // Call actual AWS Lambda API instead of simulation
+        const response = await callLoginAPI(loginData);
+
         if (response.success) {
             showLoginSuccess('Login successful! Redirecting...');
-            
+
             // Store login state
             localStorage.setItem('userLoggedIn', 'true');
             localStorage.setItem('userEmail', email);
-            
+
             // Redirect after delay
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 1500);
         } else {
-            if (response.code === 'TURNSTILE_REQUIRED' || response.requiresTurnstile) {
-                showLoginTurnstileWidget();
-                showLoginError('Security verification required. Please complete the verification below.');
+            if (response.error === 'TURNSTILE_REQUIRED' || response.requiresTurnstile) {
+                showLoginError('Security verification required. Please try again.');
             } else {
                 showLoginError(response.message || 'Login failed. Please check your credentials and try again.');
             }
         }
-        
+
     } catch (error) {
-        console.error('Login error:', error);
+        console.error('Login submission error:', error);
         showLoginError('Login failed. Please try again.');
     } finally {
         setLoginLoading(false);
     }
+}
+
+/**
+ * Call actual login API (AWS Lambda)
+ */
+async function callLoginAPI(loginData) {
+    const response = await fetch('https://da84s1s15g.execute-api.af-south-1.amazonaws.com/prod/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(loginData)
+    });
+
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
 }
 
 /**

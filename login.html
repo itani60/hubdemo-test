@@ -540,12 +540,16 @@
                             <a href="#" class="forgot-link" onclick="openForgotModal(); return false;">Forgot password?</a>
                         </div>
 
-                        <!-- Cloudflare Turnstile Widget -->
+                        <!-- Cloudflare Turnstile Widget - Invisible Mode -->
                         <div class="cf-turnstile"
-                             data-sitekey="0x4AAAAAAB3faEFmb8ePRkfo"
+                             data-sitekey="0x4AAAAAAB3qNtVK4DShvWVn"
                              data-theme="light"
-                             data-size="normal"
-                             data-action="login">
+                             data-size="invisible"
+                             data-action="login"
+                             data-execution="execute"
+                             data-appearance="execute"
+                             data-callback="onTurnstileSuccess"
+                             data-error-callback="onTurnstileError">
                         </div>
 
                         <button type="submit" class="register-submit-btn" id="loginSubmitBtn">
