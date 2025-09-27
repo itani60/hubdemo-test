@@ -1,9 +1,5 @@
-/**
- * Cloudflare Turnstile Configuration
- * Managed mode with implicit rendering - intelligent challenge display
- * Privacy-focused alternative to reCAPTCHA
- * Following official Cloudflare documentation best practices
- */
+
+
 
 window.TURNSTILE_CONFIG = {
      // Cloudflare Turnstile site key (Production key)
