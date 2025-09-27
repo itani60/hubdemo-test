@@ -6,7 +6,7 @@
  */
 
 window.TURNSTILE_CONFIG = {
-    // Cloudflare Turnstile site key (matches lambda environment)
+    // Cloudflare Turnstile site key (Production key)
     siteKey: '0x4AAAAAAB3faEFmb8ePRkfo',
 
     // Turnstile theme options (matches HTML data-theme)
