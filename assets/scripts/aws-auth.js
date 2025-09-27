@@ -15,8 +15,6 @@ class AWSAuthService {
             resetPassword: '/auth/reset-password'
         };
         
-        // Turnstile widget management
-        this.turnstileWidgetId = null;
         
         // Prevent duplicate resend calls
         this.isResending = false;
@@ -143,33 +141,8 @@ class AWSAuthService {
     getOTPCode() {
         const otpInputs = document.querySelectorAll('.otp-input');
         const otpCode = Array.from(otpInputs).map(input => input.value).join('');
-        
-        // Debug logging for OTP collection
-        console.log('OTP Collection Debug:', {
-            individualInputs: Array.from(otpInputs).map((input, index) => ({
-                index,
-                value: input.value,
-                length: input.value.length,
-                charCodes: input.value.split('').map(char => char.charCodeAt(0))
-            })),
-            finalOTP: otpCode,
-            otpLength: otpCode.length,
-            otpType: typeof otpCode,
-            otpCharCodes: otpCode.split('').map(char => char.charCodeAt(0)),
-            isOnlyDigits: /^\d+$/.test(otpCode)
-        });
-        
-        // Sanitize the OTP to ensure it's clean
-        const sanitizedOTP = otpCode.replace(/\D/g, ''); // Remove any non-digit characters
-        
-        if (sanitizedOTP !== otpCode) {
-            console.warn('OTP contained non-digit characters:', {
-                original: otpCode,
-                sanitized: sanitizedOTP
-            });
-        }
-        
-        return sanitizedOTP;
+        // Sanitize: keep digits only
+        return otpCode.replace(/\D/g, '');
     }
 
     /**
@@ -213,7 +186,7 @@ class AWSAuthService {
             return;
         }
         
-        // Check if Turnstile is required and get token
+        // Check if Turnstile is required and get token (implicit rendering)
         const captchaToken = await this.getCaptchaToken();
         if (captchaToken) {
             registrationData.captchaToken = captchaToken;
@@ -231,7 +204,7 @@ class AWSAuthService {
                 this.hideTurnstileWidget();
             } else {
                 // Check if Turnstile is required
-                if (response.code === 'CAPTCHA_REQUIRED' || response.captchaRequired) {
+                if (response.code === 'TURNSTILE_REQUIRED' || response.turnstileRequired) {
                     this.showTurnstileWidget();
                     this.showRegistrationError('Security verification required. Please complete the verification below.');
                 } else {
@@ -295,26 +268,15 @@ class AWSAuthService {
     }
 
     /**
-     * Get Turnstile token if available (Invisible mode)
+     * Get Turnstile token if available (Implicit rendering)
      */
     async getCaptchaToken() {
-        // Check if Turnstile token is available from callback
-        if (window.turnstileToken) {
-            return window.turnstileToken;
+        // For implicit rendering, get token from the hidden form field
+        const turnstileResponse = document.querySelector('input[name="cf-turnstile-response"]');
+        if (turnstileResponse && turnstileResponse.value) {
+            return turnstileResponse.value;
         }
-        
-        // For invisible mode, check if widget is rendered and has a token
-        if (typeof turnstile !== 'undefined' && this.turnstileWidgetId) {
-            try {
-                const token = turnstile.getResponse(this.turnstileWidgetId);
-                if (token) {
-                    return token;
-                }
-            } catch (error) {
-                console.warn('Turnstile token retrieval failed:', error);
-            }
-        }
-        
+
         return null;
     }
 
@@ -738,10 +700,8 @@ class AWSAuthService {
                 // Store email for reset password page
                 sessionStorage.setItem('resetPasswordEmail', email);
                 
-                // Redirect to reset password page
-                setTimeout(() => {
-                    window.location.href = 'reset-password.html';
-                }, 2000);
+                // Navigation handled by caller (e.g., login.html forgot flow)
+                // Do not redirect here to avoid double-navigation
                 
                 // Log that Turnstile was used
                 console.log('Forgot password successful with Turnstile:', {
@@ -1114,8 +1074,8 @@ class AWSAuthService {
      * Set submit button loading state
      */
     setSubmitButtonLoading(loading) {
-        const submitBtn = document.querySelector('.register-submit-btn');
         const form = document.getElementById('registerForm');
+        const submitBtn = form ? form.querySelector('.register-submit-btn') : document.querySelector('.register-submit-btn');
         
         if (submitBtn) {
             if (loading) {
@@ -1135,11 +1095,7 @@ class AWSAuthService {
         if (form) {
             const inputs = form.querySelectorAll('input, button');
             inputs.forEach(input => {
-                if (loading) {
-                    input.disabled = true;
-                } else {
-                    input.disabled = false;
-                }
+                input.disabled = !!loading;
             });
         }
     }
@@ -1238,43 +1194,14 @@ class AWSAuthService {
     }
 
     /**
-     * Show Turnstile widget when required (Invisible mode)
+     * Show Turnstile widget when required (Implicit rendering)
      */
     showTurnstileWidget() {
-        const turnstileContainer = document.getElementById('turnstileContainer');
-        if (turnstileContainer) {
-            // For invisible mode, container can be hidden but widget still works
-            turnstileContainer.style.display = 'none';
-            
-            // Render invisible Turnstile widget if not already rendered
-            if (typeof turnstile !== 'undefined' && !this.turnstileWidgetId) {
-                this.turnstileWidgetId = turnstile.render(turnstileContainer, {
-                    sitekey: window.TURNSTILE_CONFIG.siteKey,
-                    callback: (token) => {
-                        console.log('Turnstile verification successful');
-                        window.turnstileToken = token;
-                    },
-                    'error-callback': (error) => {
-                        console.error('Turnstile verification failed:', error);
-                        window.turnstileToken = null;
-                        this.showRegistrationError('Security verification failed. Please try again.');
-                    },
-                    'expired-callback': () => {
-                        console.log('Turnstile token expired');
-                        window.turnstileToken = null;
-                        this.resetTurnstileWidget();
-                    },
-                    theme: window.TURNSTILE_CONFIG.theme || 'light',
-                    size: window.TURNSTILE_CONFIG.size || 'invisible',
-                    execution: window.TURNSTILE_CONFIG.execution || 'execute',
-                    appearance: window.TURNSTILE_CONFIG.appearance || 'execute'
-                });
-                
-                // Execute the invisible challenge immediately
-                if (this.turnstileWidgetId) {
-                    turnstile.execute(turnstileContainer);
-                }
-            }
+        // For implicit rendering, the widget is already in the DOM
+        // Just ensure it's visible if it was hidden
+        const turnstileWidget = document.querySelector('.cf-turnstile');
+        if (turnstileWidget) {
+            turnstileWidget.style.display = 'block';
         }
     }
 
@@ -1282,107 +1209,68 @@ class AWSAuthService {
      * Hide Turnstile widget
      */
     hideTurnstileWidget() {
-        const turnstileContainer = document.getElementById('turnstileContainer');
-        if (turnstileContainer) {
-            turnstileContainer.style.display = 'none';
-        }
+        const containerA = document.getElementById('turnstileContainer');
+        const containerB = document.getElementById('loginTurnstileContainer');
+        if (containerA) containerA.style.display = 'none';
+        if (containerB) containerB.style.display = 'none';
     }
 
     /**
-     * Reset Turnstile widget
+     * Reset Turnstile widget (Implicit rendering)
      */
     resetTurnstileWidget() {
-        if (typeof turnstile !== 'undefined' && this.turnstileWidgetId) {
-            turnstile.reset(this.turnstileWidgetId);
+        // For implicit rendering, reset by clearing the hidden input
+        const turnstileResponse = document.querySelector('input[name="cf-turnstile-response"]');
+        if (turnstileResponse) {
+            turnstileResponse.value = '';
         }
-        window.turnstileToken = null;
     }
 
     /**
-     * Remove Turnstile widget completely
+     * Remove Turnstile widget completely (Implicit rendering)
      */
     removeTurnstileWidget() {
-        if (typeof turnstile !== 'undefined' && this.turnstileWidgetId) {
-            turnstile.remove(this.turnstileWidgetId);
-            this.turnstileWidgetId = null;
+        // For implicit rendering, just clear the token
+        const turnstileResponse = document.querySelector('input[name="cf-turnstile-response"]');
+        if (turnstileResponse) {
+            turnstileResponse.value = '';
         }
-        window.turnstileToken = null;
     }
 
     /**
-     * Execute invisible Turnstile for resend verification
+     * Execute Turnstile for resend verification (Implicit rendering)
      */
     async executeInvisibleTurnstile(action = 'resend_verification') {
         return new Promise((resolve, reject) => {
             try {
-                // Check if Turnstile is available
-                if (typeof turnstile === 'undefined') {
-                    console.error('Turnstile not loaded');
-                    reject(new Error('Security verification not available'));
+                // For implicit rendering, check if token is already available
+                const turnstileResponse = document.querySelector('input[name="cf-turnstile-response"]');
+                if (turnstileResponse && turnstileResponse.value) {
+                    console.log('Turnstile token already available for:', action);
+                    resolve(turnstileResponse.value);
                     return;
                 }
 
-                // Check if we have a site key
-                if (!window.TURNSTILE_CONFIG?.siteKey) {
-                    console.error('Turnstile site key not configured');
-                    reject(new Error('Security verification not configured'));
-                    return;
-                }
+                // If no token, wait a bit for user to complete the challenge
+                // In implicit rendering, the widget is always visible, so user needs to complete it
+                const checkToken = setInterval(() => {
+                    const currentToken = document.querySelector('input[name="cf-turnstile-response"]');
+                    if (currentToken && currentToken.value) {
+                        clearInterval(checkToken);
+                        console.log('Turnstile verification successful for:', action);
+                        resolve(currentToken.value);
+                    }
+                }, 500);
 
-                // Create a temporary container for the invisible widget
-                const tempContainer = document.createElement('div');
-                tempContainer.style.display = 'none';
-                document.body.appendChild(tempContainer);
-
-                // Render invisible Turnstile widget
-                const widgetId = turnstile.render(tempContainer, {
-                    sitekey: window.TURNSTILE_CONFIG.siteKey,
-                    callback: (token) => {
-                        console.log('Invisible Turnstile verification successful for:', action);
-                        window.turnstileToken = token;
-                        
-                        // Clean up
-                        turnstile.remove(widgetId);
-                        document.body.removeChild(tempContainer);
-                        
-                        resolve(token);
-                    },
-                    'error-callback': (error) => {
-                        console.error('Invisible Turnstile verification failed:', error);
-                        window.turnstileToken = null;
-                        
-                        // Clean up
-                        turnstile.remove(widgetId);
-                        document.body.removeChild(tempContainer);
-                        
-                        reject(new Error('Security verification failed'));
-                    },
-                    'expired-callback': () => {
-                        console.log('Invisible Turnstile token expired');
-                        window.turnstileToken = null;
-                        
-                        // Clean up
-                        turnstile.remove(widgetId);
-                        document.body.removeChild(tempContainer);
-                        
-                        reject(new Error('Security verification expired'));
-                    },
-                    theme: window.TURNSTILE_CONFIG.theme || 'light',
-                    size: 'invisible',
-                    action: action
-                });
-
-                // Execute the invisible challenge immediately
-                if (widgetId) {
-                    turnstile.execute(tempContainer);
-                } else {
-                    // Clean up if render failed
-                    document.body.removeChild(tempContainer);
-                    reject(new Error('Failed to initialize security verification'));
-                }
+                // Timeout after 30 seconds
+                setTimeout(() => {
+                    clearInterval(checkToken);
+                    console.error('Turnstile verification timeout for:', action);
+                    reject(new Error('Security verification timeout'));
+                }, 30000);
 
             } catch (error) {
-                console.error('Error executing invisible Turnstile:', error);
+                console.error('Error executing Turnstile:', error);
                 reject(error);
             }
         });

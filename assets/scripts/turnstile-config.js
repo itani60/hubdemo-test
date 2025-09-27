@@ -1,25 +1,25 @@
 /**
  * Cloudflare Turnstile Configuration
- * Invisible mode - no user interaction required
+ * Managed mode with implicit rendering - intelligent challenge display
  * Privacy-focused alternative to reCAPTCHA
  * Following official Cloudflare documentation best practices
  */
 
 window.TURNSTILE_CONFIG = {
-    // Cloudflare Turnstile site key
+    // Cloudflare Turnstile site key (matches lambda environment)
     siteKey: '0x4AAAAAAB3faEFmb8ePRkfo',
-    
-    // Turnstile theme options
+
+    // Turnstile theme options (matches HTML data-theme)
     theme: 'light', // 'light', 'dark', or 'auto'
-    
-    // Turnstile size options
-    size: 'invisible', // 'invisible' for no user interaction
-    
+
+    // Turnstile size options (matches HTML data-size for implicit rendering)
+    size: 'normal', // 'normal' for visible widget, 'invisible' for hidden
+
     // Execution mode - when to run the challenge
-    execution: 'execute', // 'execute' for on-demand challenges
-    
+    execution: 'render', // 'render' for automatic execution on page load
+
     // Appearance mode - when the widget is visible
-    appearance: 'execute', // 'execute' for invisible challenges
+    appearance: 'always', // 'always' for visible widget
     
     // Language (optional)
     language: 'en',
