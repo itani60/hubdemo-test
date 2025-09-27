@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Password requirements elements
     const passwordRequirements = document.getElementById('newPasswordRequirements');
-    const requirements = document.querySelectorAll('.requirement');
+    const requirementEls = document.querySelectorAll('.requirement');
     const passwordMatch = document.getElementById('resetPasswordMatch');
     
     // Password toggle buttons
@@ -43,8 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof showNotification === 'function') {
             showNotification(`Verification code sent to ${resetEmail}`, 'success');
         }
-        // Clear once used to avoid stale banner on reload
-        sessionStorage.removeItem('resetPasswordEmail');
+        // Keep email in session until reset succeeds to support resends/retries
+        // sessionStorage.removeItem('resetPasswordEmail');
     } else {
         console.log('Email banner not shown. Reasons:');
         console.log('- Reset email:', resetEmail);
@@ -234,17 +234,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Auto-submit form when OTP is complete and passwords are valid
-    function autoSubmitResetForm(otpValue) {
+    async function autoSubmitResetForm(otpValue) {
         const newPassword = newPasswordInput ? newPasswordInput.value : '';
         const confirmPassword = confirmPasswordInput ? confirmPasswordInput.value : '';
         const email = resetEmail || getEmailFromSession();
-        
+
         // Check if passwords are valid and match
         if (newPassword && confirmPassword && newPassword === confirmPassword && newPassword.length >= 8) {
             // Call AWS Auth system to handle reset password
             if (window.awsAuth && typeof window.awsAuth.handleResetPassword === 'function') {
-                console.log('Auto-submitting reset password form');
-                window.awsAuth.handleResetPassword(email, otpValue, newPassword);
+                try {
+                    if (resetPasswordBtn) {
+                        resetPasswordBtn.disabled = true;
+                        resetPasswordBtn.classList.add('loading');
+                    }
+                    console.log('Auto-submitting reset password form');
+                    await window.awsAuth.handleResetPassword(email, otpValue, newPassword);
+                } catch (e) {
+                    console.error('Auto reset password error:', e);
+                    if (typeof window.showNotification === 'function') {
+                        window.showNotification(e?.message || 'Failed to reset password. Please try again.', 'error');
+                    }
+                } finally {
+                    if (resetPasswordBtn) {
+                        resetPasswordBtn.disabled = false;
+                        resetPasswordBtn.classList.remove('loading');
+                    }
+                }
             }
         }
     }
@@ -302,21 +318,49 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle resend OTP - Now handled by AWS Auth
-    function handleResendOtp() {
+    async function handleResendOtp() {
         const email = resetEmail || getEmailFromSession();
         
         if (!email) {
-            showNotification('Email not found. Please try the forgot password process again.', 'error');
+            (window.showNotification || showNotification)('Email not found. Please try the forgot password process again.', 'error');
             return;
         }
         
-        // Call AWS Auth system to handle resend forgot code
-        if (window.awsAuth && typeof window.awsAuth.handleResendForgotCode === 'function') {
+        if (!window.awsAuth) {
+            (window.showNotification || showNotification)('Resend functionality not available. Please try again.', 'error');
+            return;
+        }
+
+        try {
             console.log('Resending forgot code for:', email);
-            window.awsAuth.handleResendForgotCode(email);
-            startOtpTimer(); // Start the cooldown timer
-        } else {
-            showNotification('Resend functionality not available. Please try again.', 'error');
+
+            // First attempt without Turnstile
+            let result = await window.awsAuth.resendForgotCode(email);
+            
+            // If server requires Turnstile, execute and retry once
+            if (result && result.turnstileRequired) {
+                const token = await window.awsAuth.executeInvisibleTurnstile('resend_forgot_code');
+                if (token) {
+                    result = await window.awsAuth.resendForgotCode(email, token);
+                }
+            }
+
+            if (result && result.success) {
+                startOtpTimer(); // Start the cooldown only on success
+                if (typeof window.showNotification === 'function') {
+                    window.showNotification(result.message || 'New password reset code sent successfully! Please check your email.', 'success');
+                }
+            } else {
+                const msg = result?.message || 'Failed to resend password reset code. Please try again.';
+                if (typeof window.showNotification === 'function') {
+                    window.showNotification(msg, 'error');
+                }
+            }
+        } catch (err) {
+            console.error('Resend forgot code error:', err);
+            if (typeof window.showNotification === 'function') {
+                window.showNotification(err?.message || 'An error occurred. Please try again.', 'error');
+            }
         }
     }
 
@@ -350,7 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Manual reset password function for button click
-    function handleManualResetPassword() {
+    async function handleManualResetPassword() {
         const email = resetEmail || getEmailFromSession();
         const otpValue = Array.from(otpInputs).map(input => input.value).join('');
         const newPassword = newPasswordInput ? newPasswordInput.value : '';
@@ -358,31 +402,45 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Validate inputs
         if (!email) {
-            showNotification('Email not found. Please try the forgot password process again.', 'error');
+            (window.showNotification || showNotification)('Email not found. Please try the forgot password process again.', 'error');
             return;
         }
         
         if (!otpValue || otpValue.length !== 6) {
-            showNotification('Please enter the complete 6-digit verification code.', 'error');
+            (window.showNotification || showNotification)('Please enter the complete 6-digit verification code.', 'error');
             return;
         }
         
         if (!newPassword || newPassword.length < 8) {
-            showNotification('Password must be at least 8 characters long.', 'error');
+            (window.showNotification || showNotification)('Password must be at least 8 characters long.', 'error');
             return;
         }
         
         if (newPassword !== confirmPassword) {
-            showNotification('Passwords do not match.', 'error');
+            (window.showNotification || showNotification)('Passwords do not match.', 'error');
             return;
         }
         
         // Call AWS Auth system to handle reset password
         if (window.awsAuth && typeof window.awsAuth.handleResetPassword === 'function') {
-            console.log('Manually submitting reset password form');
-            window.awsAuth.handleResetPassword(email, otpValue, newPassword);
+            try {
+                console.log('Manually submitting reset password form');
+                if (resetPasswordBtn) {
+                    resetPasswordBtn.disabled = true;
+                    resetPasswordBtn.classList.add('loading');
+                }
+                await window.awsAuth.handleResetPassword(email, otpValue, newPassword);
+            } catch (e) {
+                console.error('Manual reset password error:', e);
+                (window.showNotification || showNotification)(e?.message || 'Failed to reset password. Please try again.', 'error');
+            } finally {
+                if (resetPasswordBtn) {
+                    resetPasswordBtn.disabled = false;
+                    resetPasswordBtn.classList.remove('loading');
+                }
+            }
         } else {
-            showNotification('Reset password functionality not available. Please try again.', 'error');
+            (window.showNotification || showNotification)('Reset password functionality not available. Please try again.', 'error');
         }
     }
 
@@ -447,6 +505,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         }, 5000);
     }
+    // Expose notification function globally for AWSAuthService
+    window.showNotification = window.showNotification || showNotification;
 
     // Auto-send OTP on page load - Now handled by AWS Auth
     // This is now managed by the AWS Auth system
@@ -461,7 +521,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initialize AWS Auth Service
     if (typeof AWSAuthService !== 'undefined') {
-        window.awsAuth = new AWSAuthService();
+        // Reuse existing global instance if available to avoid duplicate listeners
+        window.awsAuth = window.awsAuthService || window.awsAuth || new AWSAuthService();
         console.log('AWS Auth Service initialized for reset password page');
     } else {
         console.error('AWSAuthService not found. Make sure aws-auth.js is loaded before reset-pass.js');
