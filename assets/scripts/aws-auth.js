@@ -8,6 +8,7 @@ class AWSAuthService {
         this.baseURL = 'https://da84s1s15g.execute-api.af-south-1.amazonaws.com';
         this.endpoints = {
             register: '/auth/register',
+            login: '/auth/login',
             verifyEmail: '/auth/verify-email',
             resendVerification: '/auth/resend-verification',
             forgotPassword: '/auth/forgot-password',
@@ -301,6 +302,122 @@ class AWSAuthService {
         }
         
         return result;
+    }
+
+    /**
+     * Login user
+     */
+    async login(email, password, turnstileToken = null) {
+        const url = this.baseURL + this.endpoints.login;
+        
+        const data = {
+            email: email,
+            password: password
+        };
+        
+        // Add Turnstile token if provided
+        if (turnstileToken) {
+            data.turnstileToken = turnstileToken;
+        }
+        
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(result.message || 'Login failed');
+        }
+        
+        return result;
+    }
+
+    /**
+     * Handle login form submission
+     */
+    async handleLogin(email, password) {
+        try {
+            console.log('Starting login request for:', email);
+            
+            // First attempt without Turnstile
+            const response = await this.login(email, password);
+            
+            // If successful, handle the response
+            if (response.success) {
+                console.log('Login successful');
+                
+                // Store tokens if provided
+                if (response.data && response.data.tokens) {
+                    localStorage.setItem('accessToken', response.data.tokens.accessToken);
+                    localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+                    localStorage.setItem('idToken', response.data.tokens.idToken);
+                }
+                
+                // Store user data if provided
+                if (response.data && response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+                
+                return response;
+            }
+            
+        } catch (error) {
+            console.error('Login error:', error);
+            
+            // Check if Turnstile is required
+            if (error.message && error.message.includes('TURNSTILE_REQUIRED')) {
+                console.log('Turnstile required for login');
+                return await this.handleTurnstileRequiredLogin(email, password, error);
+            }
+            
+            throw error;
+        }
+    }
+
+    /**
+     * Handle Turnstile requirement for login
+     */
+    async handleTurnstileRequiredLogin(email, password, initialResponse) {
+        try {
+            console.log('Handling Turnstile requirement for login');
+            
+            // Execute invisible Turnstile
+            const turnstileToken = await this.executeInvisibleTurnstile('login');
+            
+            if (!turnstileToken) {
+                throw new Error('Turnstile verification failed');
+            }
+            
+            // Retry login with Turnstile token
+            const response = await this.login(email, password, turnstileToken);
+            
+            if (response.success) {
+                console.log('Login successful with Turnstile');
+                
+                // Store tokens if provided
+                if (response.data && response.data.tokens) {
+                    localStorage.setItem('accessToken', response.data.tokens.accessToken);
+                    localStorage.setItem('refreshToken', response.data.tokens.refreshToken);
+                    localStorage.setItem('idToken', response.data.tokens.idToken);
+                }
+                
+                // Store user data if provided
+                if (response.data && response.data.user) {
+                    localStorage.setItem('user', JSON.stringify(response.data.user));
+                }
+            }
+            
+            return response;
+            
+        } catch (error) {
+            console.error('Turnstile login error:', error);
+            throw error;
+        }
     }
 
     /**

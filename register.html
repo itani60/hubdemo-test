@@ -15,6 +15,9 @@
    
     <script src="assets/scripts/turnstile-config.js"></script>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
+    <!-- CSP Meta Tag for Turnstile -->
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://challenges.cloudflare.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; frame-src 'self' https://challenges.cloudflare.com;">
   
 
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -562,7 +565,12 @@
                         </div>
 
                         <!-- Cloudflare Turnstile Widget -->
-                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAB3faEFmb8ePRkfo" data-theme="light" data-size="normal"></div>
+                        <div class="cf-turnstile"
+                             data-sitekey="0x4AAAAAAB3faEFmb8ePRkfo"
+                             data-theme="light"
+                             data-size="normal"
+                             data-action="register">
+                        </div>
 
                         <button type="submit" class="register-submit-btn">
                             Register
