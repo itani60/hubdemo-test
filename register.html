@@ -17,7 +17,18 @@
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
     <!-- CSP Meta Tag for Turnstile -->
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' https://challenges.cloudflare.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; frame-src 'self' https://challenges.cloudflare.com;">
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://accounts.google.com;
+        style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://fonts.googleapis.com;
+        img-src 'self' data: https: blob:;
+        font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com;
+        frame-src 'self' https://challenges.cloudflare.com https://accounts.google.com;
+        connect-src 'self' https://da84s1s15g.execute-api.af-south-1.amazonaws.com https://api.resend.com;
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+    ">
   
 
     <link rel="stylesheet" href="assets/css/styles.css">
