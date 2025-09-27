@@ -3,8 +3,7 @@
  * Handles login form functionality and Turnstile integration
  */
 
-// Global variables
-let loginTurnstileWidgetId = null;
+// Global variables (none needed for implicit rendering)
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
@@ -50,12 +49,12 @@ function setupFormValidation() {
     
     if (emailInput) {
         emailInput.addEventListener('blur', validateEmail);
-        emailInput.addEventListener('input', clearFieldError);
+        emailInput.addEventListener('input', (e) => clearFieldError(e.target));
     }
     
     if (passwordInput) {
         passwordInput.addEventListener('blur', validatePassword);
-        passwordInput.addEventListener('input', clearFieldError);
+        passwordInput.addEventListener('input', (e) => clearFieldError(e.target));
     }
     
     if (loginForm) {
@@ -64,16 +63,12 @@ function setupFormValidation() {
 }
 
 /**
- * Setup Turnstile integration
+ * Setup Turnstile integration (implicit rendering)
  */
 function setupTurnstileIntegration() {
-    // Wait for Turnstile to be available
-    const checkTurnstile = setInterval(() => {
-        if (typeof turnstile !== 'undefined') {
-            clearInterval(checkTurnstile);
-            console.log('Turnstile is ready for login page');
-        }
-    }, 100);
+    // For implicit rendering, Turnstile automatically handles the widget
+    // The token will be available in the hidden form field when completed
+    console.log('Turnstile implicit rendering setup for login page');
 }
 
 /**
@@ -113,16 +108,21 @@ function validatePassword() {
  * Show field error
  */
 function showFieldError(input, message) {
+    if (!input) return;
     clearFieldError(input);
-    
+
+    const formGroup = input.closest('.form-group') || input.parentElement;
+    if (!formGroup) return;
+
     const errorDiv = document.createElement('div');
     errorDiv.className = 'field-error';
     errorDiv.textContent = message;
     errorDiv.style.color = '#dc3545';
     errorDiv.style.fontSize = '0.875rem';
     errorDiv.style.marginTop = '5px';
-    
-    input.parentNode.parentNode.appendChild(errorDiv);
+
+    formGroup.appendChild(errorDiv);
+    formGroup.classList.add('error');
     input.style.borderColor = '#dc3545';
 }
 
@@ -130,10 +130,15 @@ function showFieldError(input, message) {
  * Clear field error
  */
 function clearFieldError(input) {
-    const errorDiv = input.parentNode.parentNode.querySelector('.field-error');
+    if (!input) return;
+    const formGroup = input.closest('.form-group') || input.parentElement;
+    if (!formGroup) return;
+
+    const errorDiv = formGroup.querySelector('.field-error');
     if (errorDiv) {
         errorDiv.remove();
     }
+    formGroup.classList.remove('error');
     input.style.borderColor = '';
 }
 
@@ -177,9 +182,9 @@ async function handleLogin(event) {
         };
         
         // Get Turnstile token if available
-        const captchaToken = await getLoginCaptchaToken();
-        if (captchaToken) {
-            loginData.captchaToken = captchaToken;
+        const turnstileToken = await getLoginCaptchaToken();
+        if (turnstileToken) {
+            loginData.turnstileToken = turnstileToken;
         }
         
         // Simulate login API call (replace with actual API)
@@ -197,7 +202,7 @@ async function handleLogin(event) {
                 window.location.href = 'index.html';
             }, 1500);
         } else {
-            if (response.code === 'CAPTCHA_REQUIRED' || response.captchaRequired) {
+            if (response.code === 'TURNSTILE_REQUIRED' || response.requiresTurnstile) {
                 showLoginTurnstileWidget();
                 showLoginError('Security verification required. Please complete the verification below.');
             } else {
@@ -214,89 +219,39 @@ async function handleLogin(event) {
 }
 
 /**
- * Get Turnstile token for login
+ * Get Turnstile token for login (implicit rendering)
  */
 async function getLoginCaptchaToken() {
-    // Check if Turnstile token is available from callback
-    if (window.loginTurnstileToken) {
-        return window.loginTurnstileToken;
+    // For implicit rendering, get token from the hidden form field
+    const turnstileResponse = document.querySelector('input[name="cf-turnstile-response"]');
+    if (turnstileResponse && turnstileResponse.value) {
+        return turnstileResponse.value;
     }
-    
-    // For invisible mode, check if widget is rendered and has a token
-    if (typeof turnstile !== 'undefined' && loginTurnstileWidgetId) {
-        try {
-            const token = turnstile.getResponse(loginTurnstileWidgetId);
-            if (token) {
-                return token;
-            }
-        } catch (error) {
-            console.warn('Turnstile token retrieval failed:', error);
-        }
-    }
-    
+
     return null;
 }
 
 /**
- * Show Turnstile widget for login
+ * Show Turnstile widget for login (implicit rendering - widget is always visible)
  */
 function showLoginTurnstileWidget() {
-    const turnstileContainer = document.getElementById('loginTurnstileContainer');
-    if (turnstileContainer) {
-        // For invisible mode, container can be hidden but widget still works
-        turnstileContainer.style.display = 'none';
-        
-        // Render invisible Turnstile widget if not already rendered
-        if (typeof turnstile !== 'undefined' && !loginTurnstileWidgetId) {
-            loginTurnstileWidgetId = turnstile.render(turnstileContainer, {
-                sitekey: window.TURNSTILE_CONFIG.siteKey,
-                callback: (token) => {
-                    console.log('Login Turnstile verification successful');
-                    window.loginTurnstileToken = token;
-                },
-                'error-callback': (error) => {
-                    console.error('Login Turnstile verification failed:', error);
-                    window.loginTurnstileToken = null;
-                    showLoginError('Security verification failed. Please try again.');
-                },
-                'expired-callback': () => {
-                    console.log('Login Turnstile token expired');
-                    window.loginTurnstileToken = null;
-                    resetLoginTurnstileWidget();
-                },
-                theme: window.TURNSTILE_CONFIG.theme || 'light',
-                size: window.TURNSTILE_CONFIG.size || 'invisible',
-                execution: window.TURNSTILE_CONFIG.execution || 'execute',
-                appearance: window.TURNSTILE_CONFIG.appearance || 'execute'
-            });
-            
-            // Execute the invisible challenge immediately
-            if (loginTurnstileWidgetId) {
-                turnstile.execute(turnstileContainer);
-            }
-        }
+    // For implicit rendering, the widget is already in the DOM
+    // Just ensure it's visible if it was hidden
+    const turnstileWidget = document.querySelector('.cf-turnstile');
+    if (turnstileWidget) {
+        turnstileWidget.style.display = 'block';
     }
 }
 
 /**
- * Reset Turnstile widget for login
+ * Reset Turnstile widget for login (implicit rendering)
  */
 function resetLoginTurnstileWidget() {
-    if (typeof turnstile !== 'undefined' && loginTurnstileWidgetId) {
-        turnstile.reset(loginTurnstileWidgetId);
+    // For implicit rendering, reset by clearing the hidden input
+    const turnstileResponse = document.querySelector('input[name="cf-turnstile-response"]');
+    if (turnstileResponse) {
+        turnstileResponse.value = '';
     }
-    window.loginTurnstileToken = null;
-}
-
-/**
- * Remove Turnstile widget for login
- */
-function removeLoginTurnstileWidget() {
-    if (typeof turnstile !== 'undefined' && loginTurnstileWidgetId) {
-        turnstile.remove(loginTurnstileWidgetId);
-        loginTurnstileWidgetId = null;
-    }
-    window.loginTurnstileToken = null;
 }
 
 /**
@@ -397,122 +352,6 @@ function handleGoogleLogin() {
 /**
  * Open forgot password modal
  */
-function openForgotModal() {
-    // Reset the modal to step 1
-    document.getElementById('forgotPasswordStep1').style.display = 'block';
-    document.getElementById('forgotPasswordStep2').style.display = 'none';
-    
-    // Clear any previous errors
-    clearForgotPasswordErrors();
-    
-    // Show the modal
-    const modal = new bootstrap.Modal(document.getElementById('forgotPasswordModal'));
-    modal.show();
-}
-
-/**
- * Handle forgot password form submission
- */
-async function handleForgotPassword(event) {
-    event.preventDefault();
-    
-    const email = document.getElementById('forgotEmail').value.trim();
-    const sendCodeBtn = document.getElementById('sendCodeBtn');
-    
-    // Clear previous errors
-    clearForgotPasswordErrors();
-    
-    // Validate email
-    if (!email) {
-        showForgotPasswordError('forgotEmailError', 'Please enter your email address.');
-        return;
-    }
-    
-    if (!isValidEmail(email)) {
-        showForgotPasswordError('forgotEmailError', 'Please enter a valid email address.');
-        return;
-    }
-    
-    // Show loading state
-    setLoadingState(sendCodeBtn, true);
-    
-    try {
-        // Simulate API call to send verification code
-        const result = await sendForgotPasswordCode(email);
-        
-        if (result.success) {
-            // Store email in sessionStorage for reset password page
-            console.log('Storing email in sessionStorage:', email);
-            sessionStorage.setItem('resetPasswordEmail', email);
-            console.log('Email stored, redirecting to reset-password.html');
-            // Redirect to reset password page
-            window.location.href = 'reset-password.html';
-        } else {
-            showForgotPasswordError('forgotEmailError', result.message || 'Failed to send verification code. Please try again.');
-        }
-    } catch (error) {
-        console.error('Forgot password error:', error);
-        showForgotPasswordError('forgotEmailError', 'An error occurred. Please try again.');
-    } finally {
-        setLoadingState(sendCodeBtn, false);
-    }
-}
-
-/**
- * Send forgot password verification code
- */
-async function sendForgotPasswordCode(email) {
-    // Simulate API call - replace with actual API endpoint
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            // Simulate success
-            resolve({
-                success: true,
-                message: 'Verification code sent successfully'
-            });
-        }, 2000);
-    });
-}
-
-/**
- * Show forgot password success step
- */
-function showForgotPasswordSuccess(email) {
-    document.getElementById('forgotPasswordStep1').style.display = 'none';
-    document.getElementById('forgotPasswordStep2').style.display = 'block';
-    document.getElementById('sentEmail').textContent = email;
-}
-
-/**
- * Resend verification code
- */
-async function resendCode() {
-    const email = document.getElementById('forgotEmail').value.trim();
-    
-    try {
-        const result = await sendForgotPasswordCode(email);
-        if (result.success) {
-            showLoginSuccess('Verification code resent successfully!');
-        } else {
-            showLoginError(result.message || 'Failed to resend code. Please try again.');
-        }
-    } catch (error) {
-        console.error('Resend code error:', error);
-        showLoginError('An error occurred while resending the code.');
-    }
-}
-
-/**
- * Go to reset password page
- */
-function goToResetPassword() {
-    // Close the modal
-    const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
-    modal.hide();
-    
-    // Redirect to reset password page
-    window.location.href = 'reset-password.html';
-}
 
 /**
  * Show forgot password error
@@ -582,11 +421,11 @@ async function simulateLoginAPI(loginData) {
                 name: 'Test User'
             }
         };
-    } else if (loginData.email === 'captcha@example.com') {
+    } else if (loginData.email === 'turnstile@example.com') {
         return {
             success: false,
-            code: 'CAPTCHA_REQUIRED',
-            captchaRequired: true,
+            code: 'TURNSTILE_REQUIRED',
+            requiresTurnstile: true,
             message: 'Security verification required'
         };
     } else {
@@ -598,27 +437,3 @@ async function simulateLoginAPI(loginData) {
 }
 
 // Global functions for backward compatibility
-function handleLogin(event) {
-    if (event) {
-        event.preventDefault();
-    }
-    
-    const emailInput = document.getElementById('loginEmail');
-    const passwordInput = document.getElementById('loginPassword');
-    
-    if (!emailInput || !passwordInput) {
-        console.error('Login form elements not found');
-        return;
-    }
-    
-    const email = emailInput.value.trim();
-    const password = passwordInput.value;
-    
-    if (!email || !password) {
-        showLoginError('Please fill in all required fields.');
-        return;
-    }
-    
-    // Call the main login handler
-    handleLogin(event);
-}

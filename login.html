@@ -24,17 +24,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
    
     <script src="assets/scripts/turnstile-config.js"></script>
-    <script>
-        // Load Cloudflare Turnstile with explicit rendering
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.TURNSTILE_CONFIG?.siteKey) {
-                const script = document.createElement('script');
-                script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-                script.defer = true;
-                document.head.appendChild(script);
-            }
-        });
-    </script>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
   
 
     <link rel="stylesheet" href="assets/css/styles.css">
@@ -548,9 +538,7 @@
                         </div>
 
                         <!-- Cloudflare Turnstile Widget -->
-                        <div class="turnstile-container" id="loginTurnstileContainer" style="display: none;">
-                            <!-- Turnstile widget will be rendered here programmatically -->
-                        </div>
+                        <div class="cf-turnstile" data-sitekey="0x4AAAAAAB3faEFmb8ePRkfo" data-theme="light" data-size="normal"></div>
 
                         <button type="submit" class="register-submit-btn" id="loginSubmitBtn">
                             <div class="loading-spinner"></div>
