@@ -427,11 +427,11 @@ body {
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
     border-right: 1px solid #e0e0e0;
-    backdrop-filter: blur(10px);
 }
 
 .mobile-sidebar.active {
     left: 0;
+    backdrop-filter: blur(10px);
 }
 
 
@@ -474,44 +474,6 @@ body {
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-.sidebar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.2rem 1.8rem;
-    border-bottom: 1px solid #e5e7eb;
-    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.sidebar-header h3 {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1f2937;
-}
-
-.sidebar-close {
-    background: rgba(0, 0, 0, 0.05);
-    border: none;
-    font-size: 1.3rem;
-    color: #6b7280;
-    cursor: pointer;
-    padding: 0.6rem;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.sidebar-close:hover {
-    background: #ef4444;
-    color: white;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-}
 
 .sidebar-content {
     padding: 1.2rem 0;
@@ -4671,6 +4633,7 @@ body {
 
 .offcanvas.show {
     right: 0;
+    backdrop-filter: blur(10px);
 }
 
 .offcanvas-header {
@@ -4691,7 +4654,6 @@ body {
 .offcanvas {
     width: 400px !important;
     box-shadow: -10px 0 30px rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
 }
 
 .offcanvas-header.bg-danger {
@@ -4707,7 +4669,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    background: url('../images/grain.svg');
     opacity: 0.3;
     z-index: 0;
 }

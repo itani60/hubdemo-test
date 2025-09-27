@@ -4,7 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CompareHubPrices</title>
-
+    <!-- Performance: preconnect to CDNs -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://challenges.cloudflare.com" crossorigin>
+    <!-- Critical CSS: minimal above-the-fold for faster first paint -->
+    <style id="critical-login-css">
+      .main { padding-top: 11rem; padding-bottom: 0; }
+      .login-wrapper { width:100%; min-height:100vh; background:#f8f9fa; padding:0.5rem 0; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; }
+      .login-container { display:flex; min-height:calc(100vh - 1rem); background:#fff; max-width:1200px; margin:0 auto; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,.1); overflow:hidden; }
+    </style>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -44,7 +54,7 @@
             letter-spacing: 0.5px;
         }
     </style>
-      <link rel="stylesheet" href="assets/css/hero-carousel.css">
+     
       <link rel="stylesheet" href="assets/css/google-button.css">
       <link rel="stylesheet" href="assets/css/footer.css">
       <link rel="stylesheet" href="assets/css/notifications.css">
@@ -717,7 +727,8 @@
         let awsAuth;
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof AWSAuthService !== 'undefined') {
-                awsAuth = new AWSAuthService();
+                // Reuse global singleton if available to avoid duplicate listeners
+                awsAuth = window.awsAuthService || new AWSAuthService();
                 console.log('AWS Auth Service initialized for login page');
             } else {
                 console.error('AWSAuthService not found. Make sure aws-auth.js is loaded.');
@@ -744,12 +755,12 @@
             
             // Validate email
             if (!email) {
-                showFieldError(forgotEmailError, 'Email address is required');
+                showForgotFieldError(forgotEmailError, 'Email address is required');
                 return;
             }
             
             if (!isValidEmail(email)) {
-                showFieldError(forgotEmailError, 'Please enter a valid email address');
+                showForgotFieldError(forgotEmailError, 'Please enter a valid email address');
                 return;
             }
             
@@ -780,7 +791,7 @@
                         return;
                     } else {
                         const message = (result && result.message) ? result.message : 'Failed to send reset code. Please try again.';
-                        showFieldError(forgotEmailError, message);
+                        showForgotFieldError(forgotEmailError, message);
                     }
                 } else {
                     throw new Error('AWS Auth service not available');
@@ -788,7 +799,7 @@
                 
             } catch (error) {
                 console.error('Forgot password error:', error);
-                showFieldError(forgotEmailError, error?.message || 'Failed to send reset code. Please try again.');
+                showForgotFieldError(forgotEmailError, error?.message || 'Failed to send reset code. Please try again.');
             } finally {
                 // Reset button state unless we redirected
                 sendCodeBtn.disabled = false;
@@ -803,14 +814,16 @@
             return emailRegex.test(email);
         }
 
-        // Show field error helper
-        function showFieldError(errorElement, message) {
+        // Show field error helper (scoped to forgot password elements)
+        function showForgotFieldError(errorElement, message) {
+            if (!errorElement) return;
             errorElement.textContent = message;
             errorElement.style.display = 'block';
         }
-
-        // Clear field error helper
-        function clearFieldError(errorElement) {
+        
+        // Clear field error helper (scoped to forgot password elements)
+        function clearForgotFieldError(errorElement) {
+            if (!errorElement) return;
             errorElement.textContent = '';
             errorElement.style.display = 'none';
         }
@@ -818,19 +831,24 @@
         // Resend OTP code
         async function resendCode() {
             const email = document.getElementById('forgotEmail').value.trim();
-            if (awsAuth && typeof awsAuth.handleForgotPassword === 'function') {
+            if (!email) {
+                if (typeof showNotification === 'function') {
+                    showNotification('Please enter your email address first.', 'error');
+                }
+                return;
+            }
+            if (awsAuth && typeof awsAuth.handleResendForgotCode === 'function') {
                 try {
-                    await awsAuth.handleForgotPassword(email);
-                    // Show notification that code was resent
-                    if (typeof showNotification === 'function') {
-                        showNotification('New OTP code sent! Please check your email.', 'success');
-                    }
+                    await awsAuth.handleResendForgotCode(email);
+                    // Success notification is shown by AWSAuthService; keep a minimal UX here if needed
                 } catch (error) {
                     console.error('Resend code error:', error);
                     if (typeof showNotification === 'function') {
-                        showNotification('Failed to resend code. Please try again.', 'error');
+                        showNotification(error?.message || 'Failed to resend code. Please try again.', 'error');
                     }
                 }
+            } else if (typeof showNotification === 'function') {
+                showNotification('Resend functionality not available. Please try again.', 'error');
             }
         }
 
