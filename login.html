@@ -768,25 +768,29 @@
                     const result = await awsAuth.handleForgotPassword(email);
                     console.log('Forgot password result:', result);
                     
-                    // Close modal and redirect to reset password page
-                    const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
-                    if (modal) {
-                        modal.hide();
+                    if (result && result.success) {
+                        // Close modal and redirect to reset password page
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal'));
+                        if (modal) {
+                            modal.hide();
+                        }
+                        
+                        console.log('Redirecting to reset-password.html');
+                        window.location.href = 'reset-password.html';
+                        return;
+                    } else {
+                        const message = (result && result.message) ? result.message : 'Failed to send reset code. Please try again.';
+                        showFieldError(forgotEmailError, message);
                     }
-                    
-                    // Redirect to reset password page
-                    console.log('Redirecting to reset-password.html');
-                    window.location.href = 'reset-password.html';
-                    
                 } else {
                     throw new Error('AWS Auth service not available');
                 }
                 
             } catch (error) {
                 console.error('Forgot password error:', error);
-                showFieldError(forgotEmailError, 'Failed to send reset code. Please try again.');
-                
-                // Reset button state on error
+                showFieldError(forgotEmailError, error?.message || 'Failed to send reset code. Please try again.');
+            } finally {
+                // Reset button state unless we redirected
                 sendCodeBtn.disabled = false;
                 sendCodeBtn.querySelector('.loading-spinner').style.display = 'none';
                 sendCodeBtn.querySelector('span').textContent = 'Send Verification Code';

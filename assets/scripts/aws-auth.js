@@ -685,17 +685,24 @@ class AWSAuthService {
                 sessionStorage.setItem('resetPasswordEmail', email);
                 
                 // Don't redirect here - let the calling page handle it
+                return { success: true, data: response.data || null, message: response.message || 'Password reset code sent successfully!' };
                 
             } else if (response.turnstileRequired) {
                 // Handle Turnstile requirement
                 await this.handleTurnstileRequiredForgotPassword(email, response);
+                // After Turnstile flow, return a generic success indicator to the caller
+                return { success: true, turnstileUsed: true, message: 'Password reset code sent successfully!' };
             } else {
-                this.showNotification(response.message || 'Failed to send password reset email. Please try again.', 'error');
+                const message = response.message || 'Failed to send password reset email. Please try again.';
+                this.showNotification(message, 'error');
+                return { success: false, message };
             }
             
         } catch (error) {
             console.error('Forgot password error:', error);
-            this.showNotification('An error occurred. Please try again.', 'error');
+            const message = error?.message || 'An error occurred. Please try again.';
+            this.showNotification(message, 'error');
+            return { success: false, message };
         }
     }
 
